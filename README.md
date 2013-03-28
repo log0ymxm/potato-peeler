@@ -7,7 +7,7 @@ Run Local
 =========
 
     mvn package
-    PORT=9900 java -cp target/classes:"target/dependency/*" HelloWorld
+    java -jar target/dependency/webapp-runner.jar target/*.war --port 8081
     
 Deployment to Heroku
 ====================

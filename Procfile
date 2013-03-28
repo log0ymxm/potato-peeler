@@ -1,2 +1,2 @@
-web:    java -cp target/classes:target/dependency/* HelloWorld
+web: java -jar target/dependency/webapp-runner.jar target/*.war
 
