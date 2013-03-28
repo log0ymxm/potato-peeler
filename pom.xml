@@ -118,6 +118,27 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+					<archive>
+						<manifest>
+							<mainClass>main.java.CommandLine</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+        <executions>
+          <execution>
+            <id>make-a-jar</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 			
 		</plugins>
 	</build>
