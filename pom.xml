@@ -149,6 +149,33 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>com.carbonfive.db-support</groupId>
+        <artifactId>db-migration-maven-plugin</artifactId>
+        <version>0.9.9-m5</version>
+        <configuration>
+          <url>jdbc:mysql://localhost/potato_peeler</url>
+          <username>root</username>
+          <password></password>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      
     </plugins>
+    
   </build>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>c5-public-repository</id>
+      <url>http://mvn.carbonfive.com/public</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
 </project>
