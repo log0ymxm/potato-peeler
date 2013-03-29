@@ -1,7 +1,7 @@
 START TRANSACTION;
 
 CREATE TABLE IF NOT EXISTS `states` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `abbreviation` varchar(2) NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -14,12 +14,12 @@ DROP TRIGGER IF EXISTS `states_GUID`;
 DELIMITER //
 CREATE TRIGGER `states_GUID` BEFORE INSERT ON `states`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `locations` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   `state_id` char(36) NOT NULL,
   PRIMARY KEY (`id`),
@@ -35,12 +35,12 @@ DROP TRIGGER IF EXISTS `locations_GUID`;
 DELIMITER //
 CREATE TRIGGER `locations_GUID` BEFORE INSERT ON `locations`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `schools` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `rmp_id` int(11) NOT NULL,
   `location_id` char(36) NOT NULL,
   PRIMARY KEY (`id`),
@@ -56,12 +56,12 @@ DROP TRIGGER IF EXISTS `schools_GUID`;
 DELIMITER //
 CREATE TRIGGER `schools_GUID` BEFORE INSERT ON `schools`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `departments` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `NAME_DEPARTMENTS_UNIQUE` (`name`)
@@ -71,12 +71,12 @@ DROP TRIGGER IF EXISTS `departments_GUID`;
 DELIMITER //
 CREATE TRIGGER `departments_GUID` BEFORE INSERT ON `departments`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `teachers` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `rmp_id` int(11) NOT NULL,
   `first_name` varchar(255) NOT NULL,
   `last_name` varchar(255) NOT NULL,
@@ -94,7 +94,7 @@ DROP TRIGGER IF EXISTS `teachers_GUID`;
 DELIMITER //
 CREATE TRIGGER `teachers_GUID` BEFORE INSERT ON `teachers`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
@@ -114,7 +114,7 @@ CREATE TABLE IF NOT EXISTS `teachers_schools` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `school_ratings` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `rmp_id` int(11) NOT NULL,
   `school_id` char(36) NOT NULL,
   `date` date NOT NULL,
@@ -142,13 +142,13 @@ DROP TRIGGER IF EXISTS `school_ratings_GUID`;
 DELIMITER //
 CREATE TRIGGER `school_ratings_GUID` BEFORE INSERT ON `school_ratings`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 
 CREATE TABLE IF NOT EXISTS `teacher_ratings` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `rmp_id` int(11) NOT NULL,
   `easiness` float NOT NULL,
   `helpfulness` float NOT NULL,
@@ -177,13 +177,13 @@ DROP TRIGGER IF EXISTS `teacher_ratings_GUID`;
 DELIMITER //
 CREATE TRIGGER `teacher_ratings_GUID` BEFORE INSERT ON `teacher_ratings`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 
 CREATE TABLE IF NOT EXISTS `teacher_feedback` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -191,13 +191,13 @@ DROP TRIGGER IF EXISTS `teacher_feedback_GUID`;
 DELIMITER //
 CREATE TRIGGER `teacher_feedback_GUID` BEFORE INSERT ON `teacher_feedback`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 
 CREATE TABLE IF NOT EXISTS `classes` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `department_id` char(36) NOT NULL,
   `level` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -212,13 +212,13 @@ DROP TRIGGER IF EXISTS `classes_GUID`;
 DELIMITER //
 CREATE TRIGGER `classes_GUID` BEFORE INSERT ON `classes`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 
 CREATE TABLE IF NOT EXISTS `transcripts` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `is_predicted` boolean NOT NULL DEFAULT false,
   `date` date NOT NULL,
   PRIMARY KEY (`id`)
@@ -228,13 +228,13 @@ DROP TRIGGER IF EXISTS `transcripts_GUID`;
 DELIMITER //
 CREATE TRIGGER `transcripts_GUID` BEFORE INSERT ON `transcripts`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
 
 CREATE TABLE IF NOT EXISTS `transcript_records` (
-  `id` char(36) NOT NULL,
+  `id` char(36) NOT NULL DEFAULT 0,
   `transcript_id` char(36) NOT NULL,
   `grade` float NOT NULL,
   `teacher_id` char(36) NOT NULL,
@@ -263,7 +263,7 @@ DROP TRIGGER IF EXISTS `transcript_records_GUID`;
 DELIMITER //
 CREATE TRIGGER `transcript_records_GUID` BEFORE INSERT ON `transcript_records`
  FOR EACH ROW begin
- SET new.id = UUID();
+ SET NEW.id = UUID();
 end//
 DELIMITER ;
 
