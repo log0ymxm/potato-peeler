@@ -60,7 +60,6 @@ public class RMPSchools
 				System.out.println("---");
 				System.out.println("Saving: " + name + " (" + rmpId + ")");
 				Location location = Location.findOrCreate(state, city);
-				String error = location.isValid();
 				School.findOrCreate(rmpId, name, location);
 			}
 			catch (InvalidModelException e)
