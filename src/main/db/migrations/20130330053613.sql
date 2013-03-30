@@ -1,0 +1,2 @@
+ALTER TABLE `locations` DROP INDEX `NAME_LOCATIONS_UNIQUE`;
+ALTER TABLE `locations` ADD UNIQUE INDEX (`name`, `state_id`);

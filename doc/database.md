@@ -18,3 +18,10 @@ New maven commands & stuff
     mvn db-migration:reset     # Drop the existing database, create a new one, and apply all pending migrations
     mvn db-migration:new       # Create a new, empty migration script
     mvn db-migration:check     # Check for pending migrations, fail the build if the db is not up to date
+
+## Useful queris
+
+    -- Informative list of schools
+    SELECT schools.name, schools.rmp_id, locations.name AS location_name, states.name AS state_name FROM schools 
+    JOIN locations ON schools.location_id = locations.id
+    JOIN states ON locations.state_id = states.id;
