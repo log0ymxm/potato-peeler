@@ -18,14 +18,14 @@ public class CLI
 		System.out.println("CLI Runner");
 
 		Options options = new Options();
-		options.addOption("S", "scrape-rmp-schools", false,
+		options.addOption("1", "scrape-rmp-schools", false,
 				"Scrape schools from Rate My Professors");
-		options.addOption("C", "scrape-school-ratings", false,
-				"Scrape school ratings from Rate My Professors");
-		options.addOption("R", "scrape-teacher-ratings", false,
-				"Scrape teacher ratings from Rate My Professors");
-		options.addOption("T", "scrape-teachers", false,
+		options.addOption("2", "scrape-teachers", false,
 				"Scrape teachers from Rate My Professors");
+		options.addOption("3", "scrape-school-ratings", false,
+				"Scrape school ratings from Rate My Professors");
+		options.addOption("4", "scrape-teacher-ratings", false,
+				"Scrape teacher ratings from Rate My Professors");
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -40,21 +40,25 @@ public class CLI
 			System.exit(1);
 		}
 
-		if (cmd.hasOption("S"))
+		if (cmd.hasOption("1"))
 		{
+			System.out.println("Fetching schools from RMP");
 			RMPSchools.fetch();
 		}
-		else if (cmd.hasOption("C"))
+		else if (cmd.hasOption("2"))
 		{
+			System.out.println("Fetching teachers from RMP");
+			RMPTeachers.fetch();
+		}
+		else if (cmd.hasOption("3"))
+		{
+			System.out.println("Fetching school ratings from RMP");
 			RMPSchoolRatings.fetch();
 		}
-		else if (cmd.hasOption("R"))
+		else if (cmd.hasOption("4"))
 		{
+			System.out.println("Feting teacher ratings from RMP");
 			RMPTeacherRatings.fetch();
-		}
-		else if (cmd.hasOption("T"))
-		{
-			RMPTeachers.fetch();
 		}
 		else
 		{
