@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import database.DBFactory;
@@ -16,6 +17,7 @@ public class School extends Model
 	private String id;
 
 	private Location location;
+	private String locationId;
 	private String name;
 	private String rmpId;
 
@@ -28,8 +30,7 @@ public class School extends Model
 			this.setId(resultSet.getString("id"));
 			this.setName(resultSet.getString("name"));
 			this.setRmpId(resultSet.getString("rmp_id"));
-			this.setLocation(Location.findById(resultSet
-					.getString("location_id")));
+			this.setLocationId(resultSet.getString("location_id"));
 			this.dirty = false;
 			this.fresh = false;
 		}
@@ -49,6 +50,49 @@ public class School extends Model
 		this.setLocation(location);
 		this.dirty = true;
 		this.fresh = true;
+	}
+
+	public static ArrayList<School> findAll()
+	{
+		System.out.println("find all schools");
+		ArrayList<School> schools = new ArrayList<>();
+
+		Connection connection = DBFactory.getConnection();
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, location_id, name, rmp_id FROM schools";
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(query);
+
+			while (resultSet.next())
+			{
+				School school = new School(resultSet);
+				schools.add(school);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return schools;
 	}
 
 	public static School findOrCreate(String rmpId, String name,
@@ -108,6 +152,11 @@ public class School extends Model
 	public Location getLocation()
 	{
 		return this.location;
+	}
+
+	public String getLocationId()
+	{
+		return this.locationId;
 	}
 
 	public String getName()
@@ -279,6 +328,11 @@ public class School extends Model
 	public void setLocation(Location location)
 	{
 		this.location = location;
+	}
+
+	public void setLocationId(String locationId)
+	{
+		this.locationId = locationId;
 	}
 
 	public void setName(String name)

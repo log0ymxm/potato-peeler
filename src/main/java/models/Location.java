@@ -16,14 +16,16 @@ public class Location extends Model
 
 	private String name;
 	private State state;
+	private String stateId;
 
 	public Location(ResultSet resultSet)
 	{
+		System.out.println("construct location from resultset");
 		try
 		{
 			this.setId(resultSet.getString("id"));
 			this.setName(resultSet.getString("name"));
-			this.setState(State.findById(resultSet.getString("state_id")));
+			this.setStateId(resultSet.getString("state_id"));
 			this.dirty = false;
 			this.fresh = false;
 		}
@@ -36,16 +38,53 @@ public class Location extends Model
 
 	public Location(String name, State state)
 	{
+		System.out.println("location constructor");
 		this.setName(name);
 		this.setState(state);
 		this.dirty = true;
 		this.fresh = true;
 	}
 
-	public static Location findById(String string)
+	public static Location findById(String id)
 	{
-		// TODO implement
-		return null;
+		Location location = null;
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, name, state_id FROM locations WHERE id = ? LIMIT 1";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				location = new Location(resultSet);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return location;
 	}
 
 	public static Location findOrCreate(State state, String name)
@@ -108,6 +147,11 @@ public class Location extends Model
 	public State getState()
 	{
 		return this.state;
+	}
+
+	public String getStateId()
+	{
+		return this.stateId;
 	}
 
 	@Override
@@ -266,6 +310,11 @@ public class Location extends Model
 	public void setState(State state)
 	{
 		this.state = state;
+	}
+
+	public void setStateId(String stateId)
+	{
+		this.stateId = stateId;
 	}
 
 	@Override
