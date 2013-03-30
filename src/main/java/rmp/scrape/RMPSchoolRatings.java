@@ -9,6 +9,7 @@ public class RMPSchoolRatings
 
 	public static void fetch()
 	{
-		// TODO implement
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 }

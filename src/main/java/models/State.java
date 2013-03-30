@@ -147,8 +147,8 @@ public class State extends Model
 	@Override
 	public boolean save()
 	{
-		// TODO implement
-		return false;
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 
 	public void setAbbreviation(String abbreviation)

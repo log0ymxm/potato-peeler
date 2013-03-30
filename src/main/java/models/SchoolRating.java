@@ -95,15 +95,15 @@ public class SchoolRating extends Model
 	@Override
 	public String isValid()
 	{
-		// TODO implement
-		return "Not Implemented";
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public boolean save()
 	{
-		// TODO implement
-		return false;
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 
 	public void setCampusGrounds(float campusGrounds)

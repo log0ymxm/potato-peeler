@@ -9,8 +9,8 @@ public class RMPTeacherRatings
 
 	public static void fetch()
 	{
-		// TODO implement
-
+		// TODO
+		throw new UnsupportedOperationException();
 	}
 
 }
