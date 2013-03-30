@@ -17,7 +17,23 @@ public class State extends Model
 	private String id;
 	private String name;
 
-	@SuppressWarnings("unchecked")
+	public State(ResultSet resultSet)
+	{
+		try
+		{
+			this.setId(resultSet.getString(1));
+			this.setAbbreviation(resultSet.getString(2));
+			this.setName(resultSet.getString(3));
+			this.dirty = false;
+			this.fresh = false;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
 	public static ArrayList<State> findAll()
 	{
 		ArrayList<State> states = new ArrayList<>();
@@ -35,10 +51,7 @@ public class State extends Model
 
 			while (resultSet.next())
 			{
-				State state = new State();
-				state.setId(resultSet.getString(1));
-				state.setAbbreviation(resultSet.getString(2));
-				state.setName(resultSet.getString(3));
+				State state = new State(resultSet);
 				states.add(state);
 			}
 		}
@@ -81,10 +94,7 @@ public class State extends Model
 
 			while (resultSet.next())
 			{
-				state = new State();
-				state.setId(resultSet.getString(1));
-				state.setAbbreviation(resultSet.getString(2));
-				state.setName(resultSet.getString(3));
+				state = new State(resultSet);
 			}
 		}
 		catch (SQLException e)
