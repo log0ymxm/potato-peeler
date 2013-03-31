@@ -1,0 +1,29 @@
+* TODO teacher rating can have multiple related classes
+  
+Some raters will put things like Econ102/103 to say they took a class
+with the teacher twice.
+
+* TODO class levels should be parsed & fixed
+  
+Classes are just strings and attached to the department of the teacher
+the ratings were scraped from, but could be parsed and normalized
+better
+
+* TODO front end interface
+  
+* TODO multi-threaded scraping
+  
+Can speed up scraping by hitting multiple pages at once
+
+* TODO grade predicting
+  
+* TODO track scraped pages in database
+
+- only scrape pages that haven't been scraped in a certain number of
+  days to avoid rescraping the same pages over & over.
+
+- maybe store checksum of page
+
+- if a checksum differs all related "paged" ratings pages will be
+  invalidated & need rescraping
+  
