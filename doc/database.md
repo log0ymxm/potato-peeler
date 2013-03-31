@@ -19,9 +19,16 @@ New maven commands & stuff
     mvn db-migration:new       # Create a new, empty migration script
     mvn db-migration:check     # Check for pending migrations, fail the build if the db is not up to date
 
-## Useful queris
+## Useful queries
 
     -- Informative list of schools
     SELECT schools.name, schools.rmp_id, locations.name AS location_name, states.name AS state_name FROM schools 
     JOIN locations ON schools.location_id = locations.id
     JOIN states ON locations.state_id = states.id;
+    
+    -- Get db sizes
+    SELECT table_schema "DB Name", 
+    Round(Sum(data_length + index_length) / 1024 / 1024, 1) "DB Size in MB" 
+    FROM information_schema.tables 
+    GROUP BY table_schema; 
+

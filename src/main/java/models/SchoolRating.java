@@ -258,7 +258,6 @@ public class SchoolRating extends Model
 	@Override
 	public String isValid()
 	{
-		// TODO
 		String valid = null;
 		if (!this.isFresh())
 		{

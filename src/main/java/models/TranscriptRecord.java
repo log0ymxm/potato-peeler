@@ -8,7 +8,7 @@ public class TranscriptRecord extends Model
 	private String comment;
 	private float grade;
 	private String id;
-	private Class relatedClass;
+	private SchoolClass relatedClass;
 	private Teacher teacher;
 	private Transcript transcript;
 
@@ -27,7 +27,7 @@ public class TranscriptRecord extends Model
 		return this.id;
 	}
 
-	public Class getRelatedClass()
+	public SchoolClass getRelatedClass()
 	{
 		return this.relatedClass;
 	}
@@ -71,7 +71,7 @@ public class TranscriptRecord extends Model
 		this.id = id;
 	}
 
-	public void setRelatedClass(Class relatedClass)
+	public void setRelatedClass(SchoolClass relatedClass)
 	{
 		this.relatedClass = relatedClass;
 	}

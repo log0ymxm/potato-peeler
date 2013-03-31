@@ -9,18 +9,31 @@ import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
 
-public class Department extends Model
+public class SchoolClass extends Model
 {
 
+	private Department department;
+	private String department_id;
 	private String id;
-	private String name;
+	private String level;
 
-	public Department(ResultSet resultSet)
+	public SchoolClass(Department department, String level)
 	{
+		System.out.println("school class constructor");
+		this.setDepartment(department);
+		this.setLevel(level);
+		this.dirty = true;
+		this.fresh = true;
+	}
+
+	public SchoolClass(ResultSet resultSet)
+	{
+		System.out.println("construct school class from resultset");
 		try
 		{
 			this.setId(resultSet.getString("id"));
-			this.setName(resultSet.getString("name"));
+			this.setDepartment_id(resultSet.getString("department_id"));
+			this.setLevel(resultSet.getString("level"));
 			this.dirty = false;
 			this.fresh = false;
 		}
@@ -31,83 +44,29 @@ public class Department extends Model
 		}
 	}
 
-	public Department(String name)
-	{
-		this.setName(name);
-		this.dirty = true;
-		this.fresh = true;
-	}
-
-	public static Department findById(String string)
-	{
-		// TODO
-		throw new UnsupportedOperationException();
-	}
-
-	public static Department findByName(String name)
-	{
-		Department department = null;
-
-		Connection connection = DBFactory.getConnection();
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-
-		try
-		{
-
-			String query = "SELECT id, name FROM departments WHERE name like ? LIMIT 1";
-			statement = connection.prepareStatement(query);
-			statement.setString(1, name);
-			resultSet = statement.executeQuery();
-
-			while (resultSet.next())
-			{
-				department = new Department(resultSet);
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
-		finally
-		{
-			try
-			{
-				resultSet.close();
-				statement.close();
-				DBFactory.closeConnection(connection);
-			}
-			catch (Exception exception)
-			{
-				exception.printStackTrace();
-			}
-		}
-		return department;
-	}
-
-	public static Department findOrCreate(String department_name)
+	public static SchoolClass findOrCreate(Department department, String level)
 			throws InvalidModelException
 	{
-		String findQuery = "SELECT id, name FROM departments WHERE name like ? LIMIT 1";
+		String findQuery = "SELECT id, department_id, level FROM classes WHERE department_id = ? AND level = ? LIMIT 1";
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try
 		{
 			statement = connection.prepareStatement(findQuery);
-			statement.setString(1, department_name);
+			statement.setString(1, department.getId());
+			statement.setString(2, level);
 
 			resultSet = statement.executeQuery();
 			if (resultSet.next())
 			{
-				return new Department(resultSet);
+				return new SchoolClass(resultSet);
 			}
 			else
 			{
-				Department department = new Department(department_name);
-				department.save();
-				return department;
+				SchoolClass schoolClass = new SchoolClass(department, level);
+				schoolClass.save();
+				return schoolClass;
 			}
 		}
 		catch (SQLException e)
@@ -132,14 +91,24 @@ public class Department extends Model
 		return null;
 	}
 
+	public Department getDepartment()
+	{
+		return this.department;
+	}
+
+	public String getDepartment_id()
+	{
+		return this.department_id;
+	}
+
 	public String getId()
 	{
 		return this.id;
 	}
 
-	public String getName()
+	public String getLevel()
 	{
-		return this.name;
+		return this.level;
 	}
 
 	@Override
@@ -149,12 +118,17 @@ public class Department extends Model
 		if (!this.isFresh())
 		{
 			valid = (this.getId() != null) ? null
-					: "An existing department needs an ID";
+					: "An existing class needs an ID";
 		}
 		if (valid == null)
 		{
-			valid = (this.getName() != null) ? null
-					: "A department needs a name";
+			valid = (this.getLevel() != null) ? null : "A class needs a level";
+		}
+		if (valid == null)
+		{
+			valid = (this.getDepartment_id() != null) ? null
+					: "A class requires a department";
+			System.out.println(this);
 		}
 		return valid;
 	}
@@ -168,24 +142,26 @@ public class Department extends Model
 		if (error == null)
 		{
 			Connection connection = DBFactory.getConnection();
-			PreparedStatement insertNewDepartment = null;
+			PreparedStatement insertNewSchoolClass = null;
 			ResultSet resultSet = null;
 			PreparedStatement selectId = null;
 			if (this.isFresh())
 			{
-				System.out.println("saving new department");
-				String insertQuery = "INSERT INTO departments (name) VALUES (?)";
+				System.out.println("saving new school class");
+				String insertQuery = "INSERT INTO classes (department_id, level) VALUES (?, ?)";
 				try
 				{
-					insertNewDepartment = connection
+					insertNewSchoolClass = connection
 							.prepareStatement(insertQuery);
-					insertNewDepartment.setString(1, this.getName());
-					result = insertNewDepartment.executeUpdate();
+					insertNewSchoolClass.setString(1, this.getDepartment_id());
+					insertNewSchoolClass.setString(2, this.getLevel());
+					result = insertNewSchoolClass.executeUpdate();
 					if (result > 0)
 					{
-						String idQuery = "SELECT id FROM departments WHERE name like ? LIMIT 1";
+						String idQuery = "SELECT id FROM classes WHERE department_id=? AND level=?";
 						selectId = connection.prepareStatement(idQuery);
-						selectId.setString(1, this.getName());
+						selectId.setString(1, this.getDepartment_id());
+						selectId.setString(2, this.getLevel());
 						resultSet = selectId.executeQuery();
 
 						if (resultSet.next())
@@ -199,7 +175,7 @@ public class Department extends Model
 						}
 						else
 						{
-							System.err.println("Error getting departments ID");
+							System.err.println("Error getting class ID");
 							return false;
 						}
 					}
@@ -215,7 +191,7 @@ public class Department extends Model
 				{
 					try
 					{
-						insertNewDepartment.close();
+						insertNewSchoolClass.close();
 						selectId.close();
 						resultSet.close();
 						DBFactory.closeConnection(connection);
@@ -230,14 +206,16 @@ public class Department extends Model
 			}
 			else
 			{
-				String updateQuery = "UPDATE departments SET name=? WHERE id=?";
-				PreparedStatement updateDepartment = null;
+				String updateQuery = "UPDATE classes SET department_id=?, level=? WHERE id=?";
+				PreparedStatement updateSchoolClass = null;
 				try
 				{
-					updateDepartment = connection.prepareStatement(updateQuery);
-					updateDepartment.setString(1, this.getName());
-					updateDepartment.setString(2, this.getId());
-					result = updateDepartment.executeUpdate();
+					updateSchoolClass = connection
+							.prepareStatement(updateQuery);
+					updateSchoolClass.setString(1, this.getDepartment_id());
+					updateSchoolClass.setString(2, this.getLevel());
+					updateSchoolClass.setString(3, this.getId());
+					result = updateSchoolClass.executeUpdate();
 					if (result > 0)
 					{
 						this.dirty = false;
@@ -253,7 +231,7 @@ public class Department extends Model
 				{
 					try
 					{
-						updateDepartment.close();
+						updateSchoolClass.close();
 						DBFactory.closeConnection(connection);
 					}
 					catch (SQLException e)
@@ -271,20 +249,25 @@ public class Department extends Model
 		return false;
 	}
 
+	public void setDepartment(Department department)
+	{
+		this.setDepartment_id(department.getId());
+		this.department = department;
+	}
+
+	public void setDepartment_id(String department_id)
+	{
+		this.department_id = department_id;
+	}
+
 	public void setId(String id)
 	{
 		this.id = id;
 	}
 
-	public void setName(String name)
+	public void setLevel(String level)
 	{
-		this.name = name;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "Department: " + this.getId() + " " + this.getName();
+		this.level = level;
 	}
 
 }

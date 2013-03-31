@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import database.DBFactory;
@@ -49,6 +50,49 @@ public class Teacher extends Model
 		this.setDepartment(department);
 		this.dirty = true;
 		this.fresh = true;
+	}
+
+	public static ArrayList<Teacher> findAll()
+	{
+		System.out.println("find all teachers");
+		ArrayList<Teacher> teachers = new ArrayList<>();
+
+		Connection connection = DBFactory.getConnection();
+		Statement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, department_id, first_name, last_name, rmp_id FROM teachers";
+			statement = connection.createStatement();
+			resultSet = statement.executeQuery(query);
+
+			while (resultSet.next())
+			{
+				Teacher teacher = new Teacher(resultSet);
+				teachers.add(teacher);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return teachers;
 	}
 
 	public static Teacher findOrCreate(String first_name, String last_name,
