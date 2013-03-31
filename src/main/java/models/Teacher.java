@@ -20,6 +20,8 @@ public class Teacher extends Model
 	private String id;
 	private String last_name;
 	private String rmpId;
+	private School school;
+	private String school_id;
 	private ArrayList<School> schools;
 
 	public Teacher(ResultSet resultSet)
@@ -31,6 +33,7 @@ public class Teacher extends Model
 			this.setLast_name(resultSet.getString("last_name"));
 			this.setRmpId(resultSet.getString("rmp_id"));
 			this.setDepartment_id(resultSet.getString("department_id"));
+			this.setSchool_id(resultSet.getString("school_id"));
 			this.dirty = false;
 			this.fresh = false;
 		}
@@ -42,12 +45,13 @@ public class Teacher extends Model
 	}
 
 	public Teacher(String first_name, String last_name, String rmp_id,
-			Department department)
+			Department department, School school)
 	{
 		this.setFirst_name(first_name);
 		this.setLast_name(last_name);
 		this.setRmpId(rmp_id);
 		this.setDepartment(department);
+		this.setSchool(school);
 		this.dirty = true;
 		this.fresh = true;
 	}
@@ -64,7 +68,7 @@ public class Teacher extends Model
 		try
 		{
 
-			String query = "SELECT id, department_id, first_name, last_name, rmp_id FROM teachers";
+			String query = "SELECT id, department_id, first_name, last_name, rmp_id, school_id FROM teachers";
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(query);
 
@@ -106,7 +110,7 @@ public class Teacher extends Model
 		try
 		{
 
-			String query = "SELECT id, department_id, first_name, last_name, rmp_id FROM teachers WHERE id = ? LIMIT 1";
+			String query = "SELECT id, department_id, first_name, last_name, rmp_id, school_id FROM teachers WHERE id = ? LIMIT 1";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, id);
 			resultSet = statement.executeQuery();
@@ -138,9 +142,10 @@ public class Teacher extends Model
 	}
 
 	public static Teacher findOrCreate(String first_name, String last_name,
-			String rmp_id, Department department) throws InvalidModelException
+			String rmp_id, Department department, School school)
+			throws InvalidModelException
 	{
-		String findQuery = "SELECT id, first_name, last_name, rmp_id, department_id FROM teachers WHERE first_name like ? AND last_name like ? AND rmp_id like ? AND department_id = ? LIMIT 1";
+		String findQuery = "SELECT id, first_name, last_name, rmp_id, department_id, school_id FROM teachers WHERE first_name like ? AND last_name like ? AND rmp_id like ? AND department_id = ? AND school_id = ? LIMIT 1";
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
@@ -151,6 +156,7 @@ public class Teacher extends Model
 			statement.setString(2, last_name);
 			statement.setString(3, rmp_id);
 			statement.setString(4, department.getId());
+			statement.setString(5, school.getId());
 
 			resultSet = statement.executeQuery();
 			if (resultSet.next())
@@ -160,7 +166,7 @@ public class Teacher extends Model
 			else
 			{
 				Teacher teacher = new Teacher(first_name, last_name, rmp_id,
-						department);
+						department, school);
 				teacher.save();
 				return teacher;
 			}
@@ -219,6 +225,16 @@ public class Teacher extends Model
 		return this.rmpId;
 	}
 
+	public School getSchool()
+	{
+		return this.school;
+	}
+
+	public String getSchool_id()
+	{
+		return this.school_id;
+	}
+
 	public ArrayList<School> getSchools()
 	{
 		return this.schools;
@@ -265,29 +281,30 @@ public class Teacher extends Model
 		if (error == null)
 		{
 			Connection connection = DBFactory.getConnection();
-			PreparedStatement insertNewDepartment = null;
+			PreparedStatement insertNewTeacher = null;
 			ResultSet resultSet = null;
 			PreparedStatement selectId = null;
 			if (this.isFresh())
 			{
-				String insertQuery = "INSERT INTO teachers (department_id, first_name, last_name, rmp_id) VALUES (?, ?, ?, ?)";
+				String insertQuery = "INSERT INTO teachers (department_id, first_name, last_name, rmp_id, school_id) VALUES (?, ?, ?, ?, ?)";
 				try
 				{
-					insertNewDepartment = connection
-							.prepareStatement(insertQuery);
-					insertNewDepartment.setString(1, this.getDepartment_id());
-					insertNewDepartment.setString(2, this.getFirst_name());
-					insertNewDepartment.setString(3, this.getLast_name());
-					insertNewDepartment.setString(4, this.getRmpId());
-					result = insertNewDepartment.executeUpdate();
+					insertNewTeacher = connection.prepareStatement(insertQuery);
+					insertNewTeacher.setString(1, this.getDepartment_id());
+					insertNewTeacher.setString(2, this.getFirst_name());
+					insertNewTeacher.setString(3, this.getLast_name());
+					insertNewTeacher.setString(4, this.getRmpId());
+					insertNewTeacher.setString(5, this.getSchool_id());
+					result = insertNewTeacher.executeUpdate();
 					if (result > 0)
 					{
-						String idQuery = "SELECT id FROM teachers WHERE department_id = ? AND first_name like ? AND last_name like ? AND rmp_id like ? LIMIT 1";
+						String idQuery = "SELECT id FROM teachers WHERE department_id = ? AND first_name like ? AND last_name like ? AND rmp_id like ? AND school_id like ? LIMIT 1";
 						selectId = connection.prepareStatement(idQuery);
 						selectId.setString(1, this.getDepartment_id());
 						selectId.setString(2, this.getFirst_name());
 						selectId.setString(3, this.getLast_name());
 						selectId.setString(4, this.getRmpId());
+						selectId.setString(5, this.getSchool_id());
 						resultSet = selectId.executeQuery();
 
 						if (resultSet.next())
@@ -316,7 +333,7 @@ public class Teacher extends Model
 				{
 					try
 					{
-						insertNewDepartment.close();
+						insertNewTeacher.close();
 						selectId.close();
 						resultSet.close();
 						DBFactory.closeConnection(connection);
@@ -331,17 +348,18 @@ public class Teacher extends Model
 			}
 			else
 			{
-				String updateQuery = "UPDATE teachers SET department_id = ?, first_name=?, last_name=?, rmp_id=? WHERE id=?";
-				PreparedStatement updateDepartment = null;
+				String updateQuery = "UPDATE teachers SET department_id = ?, first_name=?, last_name=?, rmp_id=?, school_id=? WHERE id=?";
+				PreparedStatement updateTeacher = null;
 				try
 				{
-					updateDepartment = connection.prepareStatement(updateQuery);
-					updateDepartment.setString(1, this.getDepartment_id());
-					updateDepartment.setString(2, this.getFirst_name());
-					updateDepartment.setString(3, this.getLast_name());
-					updateDepartment.setString(4, this.getRmpId());
-					updateDepartment.setString(5, this.getId());
-					result = updateDepartment.executeUpdate();
+					updateTeacher = connection.prepareStatement(updateQuery);
+					updateTeacher.setString(1, this.getDepartment_id());
+					updateTeacher.setString(2, this.getFirst_name());
+					updateTeacher.setString(3, this.getLast_name());
+					updateTeacher.setString(4, this.getRmpId());
+					updateTeacher.setString(5, this.getSchool_id());
+					updateTeacher.setString(6, this.getId());
+					result = updateTeacher.executeUpdate();
 					if (result > 0)
 					{
 						this.dirty = false;
@@ -357,7 +375,7 @@ public class Teacher extends Model
 				{
 					try
 					{
-						updateDepartment.close();
+						updateTeacher.close();
 						DBFactory.closeConnection(connection);
 					}
 					catch (SQLException e)
@@ -404,6 +422,17 @@ public class Teacher extends Model
 	public void setRmpId(String rmpId)
 	{
 		this.rmpId = rmpId;
+	}
+
+	public void setSchool(School school)
+	{
+		this.setSchool_id(school.getId());
+		this.school = school;
+	}
+
+	public void setSchool_id(String school_id)
+	{
+		this.school_id = school_id;
 	}
 
 	public void setSchools(ArrayList<School> schools)

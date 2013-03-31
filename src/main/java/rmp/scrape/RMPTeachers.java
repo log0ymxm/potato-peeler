@@ -93,7 +93,8 @@ public class RMPTeachers
 						+ ")");
 				Department department = Department
 						.findOrCreate(department_name);
-				Teacher.findOrCreate(first_name, last_name, rmp_id, department);
+				Teacher.findOrCreate(first_name, last_name, rmp_id, department,
+						school);
 			}
 			catch (InvalidModelException e)
 			{
