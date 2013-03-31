@@ -33,6 +33,12 @@ public class RMPTeacherRatings
 		System.out.println("All teachers scraped for ratings");
 	}
 
+	public static void fetch(String optionValue)
+	{
+		Teacher teacher = Teacher.findById(optionValue);
+		RMPTeacherRatings.fetchByTeacher(teacher, 1);
+	}
+
 	public static void fetchByTeacher(Teacher teacher, int pageNumber)
 	{
 		String url = String.format(RMPTeacherRatings.urlTemplate,

@@ -26,6 +26,10 @@ public class CLI
 				"Scrape school ratings from Rate My Professors");
 		options.addOption("4", "scrape-teacher-ratings", false,
 				"Scrape teacher ratings from Rate My Professors");
+		options.addOption("s", "school-id", true,
+				"Only scrape a specific school for ratings or teachers");
+		options.addOption("t", "teacher-id", true,
+				"Only scrape a specific teacher for ratings");
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -48,17 +52,38 @@ public class CLI
 		else if (cmd.hasOption("2"))
 		{
 			System.out.println("Fetching teachers from RMP");
-			RMPTeachers.fetch();
+			if (cmd.hasOption("s"))
+			{
+				RMPTeachers.fetch();
+			}
+			else
+			{
+				RMPTeachers.fetch(cmd.getOptionValue("s"));
+			}
 		}
 		else if (cmd.hasOption("3"))
 		{
 			System.out.println("Fetching school ratings from RMP");
-			RMPSchoolRatings.fetch();
+			if (cmd.hasOption("s"))
+			{
+				RMPSchoolRatings.fetch();
+			}
+			else
+			{
+				RMPSchoolRatings.fetch(cmd.getOptionValue("s"));
+			}
 		}
 		else if (cmd.hasOption("4"))
 		{
 			System.out.println("Feting teacher ratings from RMP");
-			RMPTeacherRatings.fetch();
+			if (cmd.hasOption("t"))
+			{
+				RMPTeacherRatings.fetch();
+			}
+			else
+			{
+				RMPTeacherRatings.fetch(cmd.getOptionValue("t"));
+			}
 		}
 		else
 		{

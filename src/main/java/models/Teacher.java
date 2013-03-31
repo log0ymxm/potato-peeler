@@ -95,6 +95,48 @@ public class Teacher extends Model
 		return teachers;
 	}
 
+	public static Teacher findById(String id)
+	{
+		Teacher teacher = null;
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, department_id, first_name, last_name, rmp_id FROM teachers WHERE id = ? LIMIT 1";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				teacher = new Teacher(resultSet);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return teacher;
+	}
+
 	public static Teacher findOrCreate(String first_name, String last_name,
 			String rmp_id, Department department) throws InvalidModelException
 	{

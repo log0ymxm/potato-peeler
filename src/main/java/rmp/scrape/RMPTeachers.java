@@ -32,6 +32,12 @@ public class RMPTeachers
 		System.out.println("All schools scraped for teachers");
 	}
 
+	public static void fetch(String optionValue)
+	{
+		School school = School.findById(optionValue);
+		RMPTeachers.fetchBySchool(school, 1);
+	}
+
 	public static void fetchBySchool(School school, int pageNumber)
 	{
 		String url = String.format(RMPTeachers.urlTemplate, school.getRmpId(),

@@ -95,6 +95,48 @@ public class School extends Model
 		return schools;
 	}
 
+	public static School findById(String id)
+	{
+		School school = null;
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, location_id, name, rmp_id FROM schools WHERE id = ? LIMIT 1";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				school = new School(resultSet);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return school;
+	}
+
 	public static School findOrCreate(String rmpId, String name,
 			Location location) throws InvalidModelException
 	{

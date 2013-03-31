@@ -31,6 +31,12 @@ public class RMPSchoolRatings
 		System.out.println("All schools scraped for school ratings");
 	}
 
+	public static void fetch(String optionValue)
+	{
+		School school = School.findById(optionValue);
+		RMPSchoolRatings.fetchBySchool(school, 1);
+	}
+
 	public static void fetchBySchool(School school, int pageNumber)
 	{
 		String url = String.format(RMPSchoolRatings.urlTemplate,
