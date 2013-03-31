@@ -52,13 +52,14 @@ public class CLI
 		else if (cmd.hasOption("2"))
 		{
 			System.out.println("Fetching teachers from RMP");
+			System.out.println(cmd.hasOption("s"));
 			if (cmd.hasOption("s"))
 			{
-				RMPTeachers.fetch();
+				RMPTeachers.fetch(cmd.getOptionValue("s"));
 			}
 			else
 			{
-				RMPTeachers.fetch(cmd.getOptionValue("s"));
+				RMPTeachers.fetch();
 			}
 		}
 		else if (cmd.hasOption("3"))
@@ -66,11 +67,11 @@ public class CLI
 			System.out.println("Fetching school ratings from RMP");
 			if (cmd.hasOption("s"))
 			{
-				RMPSchoolRatings.fetch();
+				RMPSchoolRatings.fetch(cmd.getOptionValue("s"));
 			}
 			else
 			{
-				RMPSchoolRatings.fetch(cmd.getOptionValue("s"));
+				RMPSchoolRatings.fetch();
 			}
 		}
 		else if (cmd.hasOption("4"))
@@ -78,11 +79,11 @@ public class CLI
 			System.out.println("Feting teacher ratings from RMP");
 			if (cmd.hasOption("t"))
 			{
-				RMPTeacherRatings.fetch();
+				RMPTeacherRatings.fetch(cmd.getOptionValue("t"));
 			}
 			else
 			{
-				RMPTeacherRatings.fetch(cmd.getOptionValue("t"));
+				RMPTeacherRatings.fetch();
 			}
 		}
 		else
