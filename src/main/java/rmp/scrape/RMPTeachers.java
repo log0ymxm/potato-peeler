@@ -54,7 +54,7 @@ public class RMPTeachers
 		// int currentPageStart = Integer.parseInt(pagesText.split(" ")[1]);
 		// int currentPageEnd = Integer.parseInt(pagesText.split(" ")[3]);
 		int totalItems = Integer.parseInt(pagesText.split(" ")[5]);
-		int totalPages = (totalItems / 20);
+		int totalPages = (totalItems / 20) + 1;
 
 		Elements teacherElements = doc.select("#ratingTable .entry");
 		Iterator<Element> teacherIterator = teacherElements.iterator();
