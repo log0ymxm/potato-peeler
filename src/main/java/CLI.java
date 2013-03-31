@@ -5,6 +5,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import predict.Grade;
 import rmp.scrape.RMPSchoolRatings;
 import rmp.scrape.RMPSchools;
 import rmp.scrape.RMPTeacherRatings;
@@ -18,6 +19,8 @@ public class CLI
 		System.out.println("CLI Runner");
 
 		Options options = new Options();
+
+		// Scraping
 		options.addOption("1", "scrape-rmp-schools", false,
 				"Scrape schools from Rate My Professors");
 		options.addOption("2", "scrape-teachers", false,
@@ -30,6 +33,9 @@ public class CLI
 				"Only scrape a specific school for ratings or teachers");
 		options.addOption("t", "teacher-id", true,
 				"Only scrape a specific teacher for ratings");
+
+		// Machine Learning
+		options.addOption("C", "cluster", false, "Cluster teacher rating data");
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -76,7 +82,7 @@ public class CLI
 		}
 		else if (cmd.hasOption("4"))
 		{
-			System.out.println("Feting teacher ratings from RMP");
+			System.out.println("Fetching teacher ratings from RMP");
 			if (cmd.hasOption("t"))
 			{
 				RMPTeacherRatings.fetch(cmd.getOptionValue("t"));
@@ -85,6 +91,11 @@ public class CLI
 			{
 				RMPTeacherRatings.fetch();
 			}
+		}
+		else if (cmd.hasOption("C"))
+		{
+			System.out.println("Clustering teacher rating data");
+			Grade.cluster();
 		}
 		else
 		{
