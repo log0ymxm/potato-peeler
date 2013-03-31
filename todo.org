@@ -27,3 +27,6 @@ Can speed up scraping by hitting multiple pages at once
 - if a checksum differs all related "paged" ratings pages will be
   invalidated & need rescraping
   
+* TODO handle read timeouts gracefully when scraping pages with jsoup
+
+* TODO use database connection pooling
