@@ -232,15 +232,8 @@ public class School extends Model
 		}
 		if (valid == null)
 		{
-			valid = (this.getLocation() != null) ? null
-					: "A school requires a location";
-		}
-		if (valid == null)
-		{
-			String locationValid = this.getLocation().isValid();
-			valid = (locationValid == null) ? null
-					: "A school requires a valid location (" + locationValid
-							+ ")";
+			valid = (this.getLocationId() != null) ? null
+					: "A school requires a location id";
 		}
 		if (valid == null)
 		{
@@ -370,11 +363,13 @@ public class School extends Model
 	public void setLocation(Location location)
 	{
 		this.location = location;
+		this.setLocationId(location.getId());
 	}
 
 	public void setLocationId(String locationId)
 	{
 		this.locationId = locationId;
+		this.location = null;
 	}
 
 	public void setName(String name)

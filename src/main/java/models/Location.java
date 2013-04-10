@@ -169,15 +169,9 @@ public class Location extends Model
 		}
 		if (valid == null)
 		{
-			valid = (this.getState() != null) ? null
-					: "A location requires a state";
+			valid = (this.getStateId() != null) ? null
+					: "A location requires a state id";
 			System.out.println(this);
-		}
-		if (valid == null)
-		{
-			String stateValid = this.getState().isValid();
-			valid = (stateValid == null) ? null
-					: "A location requires a valid state (" + stateValid + ")";
 		}
 		return valid;
 	}
@@ -310,11 +304,13 @@ public class Location extends Model
 	public void setState(State state)
 	{
 		this.state = state;
+		this.setStateId(state.getId());
 	}
 
 	public void setStateId(String stateId)
 	{
 		this.stateId = stateId;
+		this.state = null;
 	}
 
 	@Override
