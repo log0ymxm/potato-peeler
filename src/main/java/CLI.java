@@ -35,7 +35,10 @@ public class CLI
 				"Only scrape a specific teacher for ratings");
 
 		// Machine Learning
-		options.addOption("C", "cluster", false, "Cluster teacher rating data");
+		options.addOption("X", "export-arff", false,
+				"Export an arff file for use in the WEKA gui");
+		options.addOption("G", "generate-model", false,
+				"Generate a model file for basic regression");
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -92,10 +95,15 @@ public class CLI
 				RMPTeacherRatings.fetch();
 			}
 		}
-		else if (cmd.hasOption("C"))
+		else if (cmd.hasOption("X"))
 		{
-			System.out.println("Clustering teacher rating data");
-			Grade.cluster();
+			System.out.println("Generating arff file");
+			Grade.generateArff();
+		}
+		else if (cmd.hasOption("G"))
+		{
+			System.out.println("Generating a model");
+			Grade.generateModel();
 		}
 		else
 		{

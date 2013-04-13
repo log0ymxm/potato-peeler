@@ -1,58 +1,80 @@
 package predict;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayesMultinomialText;
-import weka.classifiers.evaluation.Evaluation;
-import weka.classifiers.functions.SGDText;
-import weka.clusterers.ClusterEvaluation;
-import weka.clusterers.Cobweb;
+import weka.core.Attribute;
+import weka.core.FastVector;
 import weka.core.Instances;
+import weka.core.converters.ArffSaver;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
-import weka.filters.unsupervised.instance.Resample;
+import weka.filters.unsupervised.attribute.NumericToNominal;
 
 public class Grade
 {
 
-	// TODO (classifier) DMNBtext
-	// TODO (ensemble) RacedIncrementalLogitBoost
-
-	private static double cobwebAcuity = 1.0;
-	private static double cobwebCutoff = 0.002;
-	private static int randomSeed = 42;
-	private static int sampleSizePercentage = 2;
-
-	public static void cluster()
+	public static void generateArff()
 	{
 		try
 		{
+			Instances instances = Grade.getData();
+			ArffSaver saver = new ArffSaver();
+			File out = new File("data/teacher_ratings.arff");
+			saver.setInstances(instances);
+			saver.setFile(out);
+			saver.writeBatch();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	public static void generateModel()
+	{
+		try
+		{
+			Classifier cls = new NaiveBayesMultinomialText();
+
+			// train
 			Instances data = Grade.getData();
 
-			Resample sampler = new Resample();
-			sampler.setInputFormat(data);
-			sampler.setSampleSizePercent(Grade.sampleSizePercentage);
-			Instances sample = Filter.useFilter(data, sampler);
+			int seed = 42;
+			int folds = 10;
 
-			System.out.println("resampled instances: " + sample.size());
+			Random rand = new Random(seed);
+			Instances randData = new Instances(data);
+			randData.randomize(rand);
+			randData.stratify(folds);
 
-			System.out.println("Building cobweb");
-			String[] options = weka.core.Utils.splitOptions(String.format(
-					"-A %f -C %f -S %d", Grade.cobwebAcuity,
-					Grade.cobwebCutoff, Grade.randomSeed));
-			Cobweb cw = new Cobweb();
-			cw.setOptions(options);
-			cw.buildClusterer(sample);
-			System.out.println(cw);
+			for (int n = 0; n < folds; n++)
+			{
+				Instances train = randData.trainCV(folds, n);
+				Instances test = randData.testCV(folds, n);
 
-			System.out.println("Evaluation cluster");
-			ClusterEvaluation eval = new ClusterEvaluation();
-			eval.setClusterer(cw);
-			eval.evaluateClusterer(data);
-			System.out.println("# of clusters: " + eval.getNumClusters());
-			System.out.println(eval);
+				data.setClassIndex(4); // easiness
+				cls.buildClassifier(train);
+				System.out.println("Classifier " + n + ":\n" + cls);
+				cls.classifyInstance(test.firstInstance());
+
+				// serialize model
+				ObjectOutputStream oos = new ObjectOutputStream(
+						new FileOutputStream("data/easiness-prediction-" + n
+								+ ".model"));
+				oos.writeObject(cls);
+				oos.flush();
+				oos.close();
+			}
+
 		}
 		catch (Exception e)
 		{
@@ -64,11 +86,13 @@ public class Grade
 	public static Instances getData()
 	{
 		String query = "SELECT "
-				+ "    teacher_ratings.comment, schools.name AS schools_name, teachers.last_name, "
-				+ "    teachers.first_name, teacher_ratings.rmp_id, "
+				// + "    teacher_ratings.comment, "
+				+ "    schools.name AS schools_name, teachers.last_name, "
+				+ "    teachers.first_name, "
 				+ "    teacher_ratings.easiness, teacher_ratings.helpfulness, "
 				+ "    teacher_ratings.clarity, teacher_ratings.rater_interest, "
-				+ "    teacher_ratings.date, classes.level, departments.name AS departments_name "
+				+ "    teacher_ratings.date, classes.level, departments.name AS departments_name,"
+				+ "    teacher_ratings.comment "
 				+ "FROM teacher_ratings "
 				+ "    JOIN teachers ON teacher_ratings.teacher_id = teachers.id "
 				+ "    JOIN schools ON teachers.school_id = schools.id "
@@ -86,93 +110,111 @@ public class Grade
 			instanceQuery.setPassword("");
 			instanceQuery.setQuery(query);
 			Instances data = instanceQuery.retrieveInstances();
+
+			// Convert ratings to categorical values since ratings are discrete.
+			NumericToNominal numToNom = new NumericToNominal();
+			numToNom.setAttributeIndices("4,5,6,7");
+			numToNom.setInputFormat(data);
+			data = Filter.useFilter(data, numToNom);
+
 			System.out.println("got data instances: " + data.size());
 			return data;
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
 		return null;
 	}
 
-	public void classify(Classifier classifier, Instances unlabeled)
+	public static void spamClassifier()
 	{
-		try
-		{
-			// set class attribute
-			unlabeled.setClassIndex(unlabeled.numAttributes() - 1);
+		// String classString = "weka.classifiers.bayes.NaiveBayes";
+		String thisClassString = "weka.classifiers.lazy.IBk";
 
-			// create copy
-			Instances labeled = new Instances(unlabeled);
+		String[] inputText =
+		{ "hey, buy this from me!", "do you want to buy?",
+				"I have a party tonight!", "today it is a nice weather",
+				"you are best", "I have a horse", "you are my friend",
+				"buy, buy, buy!", "it is spring in the air",
+				"do you want to come?" };
 
-			// label instances
-			for (int i = 0; i < unlabeled.numInstances(); i++)
-			{
-				double clsLabel = classifier.classifyInstance(unlabeled
-						.instance(i));
-				labeled.instance(i).setClassValue(clsLabel);
-			}
-		}
-		catch (Exception e)
+		String[] inputClasses =
+		{ "spam", "spam", "no spam", "no spam", "spam", "no spam", "no spam",
+				"spam", "no spam", "no spam" };
+
+		String[] testText =
+		{ "you want to buy from me?", "usually I run in stairs", "buy it now!",
+				"buy, buy, buy!", "you are the best, buy!",
+				"it is spring in the air" };
+
+		if (inputText.length != inputClasses.length)
 		{
-			e.printStackTrace();
+			System.err
+					.println("The length of text and classes must be the same!");
 			System.exit(1);
 		}
+
+		// calculate the classValues
+		HashSet classSet = new HashSet(Arrays.asList(inputClasses));
+		classSet.add("?");
+		String[] classValues = (String[]) classSet.toArray(new String[0]);
+
+		//
+		// create class attribute
+		//
+		FastVector classAttributeVector = new FastVector();
+		for (String classValue : classValues)
+		{
+			classAttributeVector.addElement(classValue);
+		}
+		Attribute thisClassAttribute = new Attribute("class",
+				classAttributeVector);
+
+		//
+		// create text attribute
+		//
+		FastVector inputTextVector = null;  // null -> String type
+		Attribute thisTextAttribute = new Attribute("text", inputTextVector);
+		for (String element : inputText)
+		{
+			thisTextAttribute.addStringValue(element);
+		}
+
+		// add test cases (to be inserted into instances)
+		// just a singular test string
+		/*
+		 * String newTextString = newTestTextField.getText();
+		 * String[] newTextArray = new String[1];
+		 * newTextArray[0] = newTextString;
+		 * if (!"".equals(newTextString)) {
+		 * thisTextAttribute.addStringValue(newTextString);
+		 * }
+		 */
+
+		// add the text of test cases
+		for (String element : testText)
+		{
+			thisTextAttribute.addStringValue(element);
+		}
+
+		//
+		// create the attribute information
+		//
+		FastVector thisAttributeInfo = new FastVector(2);
+		thisAttributeInfo.addElement(thisTextAttribute);
+		thisAttributeInfo.addElement(thisClassAttribute);
+
+		TextClassifier classifier = new TextClassifier(inputText, inputClasses,
+				thisAttributeInfo, thisTextAttribute, thisClassAttribute,
+				thisClassString);
+
+		System.out.println("DATA SET:\n");
+		System.out.println(classifier.classify(thisClassString));
+
+		System.out.println("NEW CASES:\n");
+		System.out.println(classifier.classifyNewCases(testText));
 	}
 
-	public void crossValidate(Classifier classifier, Instances data)
-	{
-		Evaluation eval;
-		try
-		{
-			eval = new Evaluation(data);
-			eval.crossValidateModel(classifier, data, 10, new Random(1));
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-	public void trainNaiveBayes(Instances data)
-	{
-		// http://weka.sourceforge.net/doc.dev/weka/classifiers/bayes/NaiveBayesMultinomialText.html
-		try
-		{
-			// TODO correct options
-			String[] options = weka.core.Utils.splitOptions("");
-			NaiveBayesMultinomialText bayesClassifier = new NaiveBayesMultinomialText();
-			bayesClassifier.setOptions(options);
-			bayesClassifier.buildClassifier(data);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-	public void trainSGD(Instances data)
-	{
-		// http://weka.sourceforge.net/doc.dev/weka/classifiers/functions/SGDText.html
-		try
-		{
-			// TODO correct options
-			String[] options = weka.core.Utils
-					.splitOptions("-C 1.0 -L 0.0010 -P 1.0E-12 -N 0 -V -1 -W 1 -K \"weka.classifiers.functions.supportVector.PolyKernel -C 250007 -E 1.0\"");
-			SGDText sgdClassifier = new SGDText();
-			sgdClassifier.setOptions(options);
-			sgdClassifier.buildClassifier(data);
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }
