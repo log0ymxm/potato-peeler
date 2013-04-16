@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import models.School;
 import models.State;
 
 @Path("states")
@@ -16,7 +17,7 @@ public class StatesJSONResource
 	@Produces("application/json")
 	public String getAllSchools(@PathParam("id") String id)
 	{
-		return State.findById(id).toJson();
+		return School.findByState(id).toJson();
 	}
 
 	@GET
