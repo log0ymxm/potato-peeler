@@ -65,8 +65,8 @@ public class Teacher extends Model
 		this.setFirst_name(first_name);
 		this.setLast_name(last_name);
 		this.setRmpId(rmp_id);
-		this.setDepartment(this.department);
-		this.setSchool(this.school);
+		this.setDepartment_id(department_id);
+		this.setSchool_id(school_id);
 	}
 
 	public static ArrayList<Teacher> findAll()
