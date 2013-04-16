@@ -14,10 +14,20 @@ public class TeacherFeedback extends Model
 		super("teacher_feedback", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 754742641530750087L;
+
 			{
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -9196697640452689340L;
 
 			{
 			}

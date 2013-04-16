@@ -19,6 +19,11 @@ public class Transcript extends Model
 		super("transcripts", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7904643137101173617L;
+
 			{
 				this.add("id");
 				this.add("date");
@@ -26,6 +31,11 @@ public class Transcript extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6517481081926596080L;
 
 			{
 			}

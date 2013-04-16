@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
+import database.ModelList;
 
 public class Teacher extends Model
 {
@@ -22,7 +23,7 @@ public class Teacher extends Model
 	private String rmpId;
 	private School school;
 	private String school_id;
-	private ArrayList<School> schools;
+	private ModelList<School> schools;
 
 	public Teacher(ResultSet resultSet) throws SQLException
 	{
@@ -47,6 +48,11 @@ public class Teacher extends Model
 		super("teachers", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -8668726198313899517L;
+
 			{
 				this.add("id");
 				this.add("department_id");
@@ -57,6 +63,11 @@ public class Teacher extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3697435892877608079L;
 
 			{
 			}
@@ -69,10 +80,10 @@ public class Teacher extends Model
 		this.setSchool_id(school_id);
 	}
 
-	public static ArrayList<Teacher> findAll()
+	public static ModelList<Teacher> findAll()
 	{
 		System.out.println("find all teachers");
-		ArrayList<Teacher> teachers = new ArrayList<>();
+		ModelList<Teacher> teachers = new ModelList<>();
 
 		Connection connection = DBFactory.getConnection();
 		Statement statement = null;
@@ -154,10 +165,10 @@ public class Teacher extends Model
 		return teacher;
 	}
 
-	public static ArrayList<Teacher> findBySchool(String school_id)
+	public static ModelList<Teacher> findBySchool(String school_id)
 	{
 		System.out.println("find all teachers");
-		ArrayList<Teacher> teachers = new ArrayList<>();
+		ModelList<Teacher> teachers = new ModelList<>();
 
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
@@ -277,6 +288,11 @@ public class Teacher extends Model
 		return this.last_name;
 	}
 
+	public String getName()
+	{
+		return this.getFirst_name() + " " + this.getLast_name();
+	}
+
 	public String getRmpId()
 	{
 		return this.rmpId;
@@ -292,7 +308,7 @@ public class Teacher extends Model
 		return this.school_id;
 	}
 
-	public ArrayList<School> getSchools()
+	public ModelList<School> getSchools()
 	{
 		return this.schools;
 	}
@@ -492,7 +508,7 @@ public class Teacher extends Model
 		this.school_id = school_id;
 	}
 
-	public void setSchools(ArrayList<School> schools)
+	public void setSchools(ModelList<School> schools)
 	{
 		this.schools = schools;
 	}

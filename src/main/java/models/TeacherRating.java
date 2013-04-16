@@ -59,6 +59,11 @@ public class TeacherRating extends Model
 		super("teacher_ratings", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4189393430864405625L;
+
 			{
 				this.add("id");
 				this.add("clarity");
@@ -73,6 +78,11 @@ public class TeacherRating extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 5262359969608239074L;
 
 			{
 			}

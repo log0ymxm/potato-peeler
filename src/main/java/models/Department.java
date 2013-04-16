@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
+import database.ModelList;
 
 public class Department extends Model
 {
@@ -33,12 +34,22 @@ public class Department extends Model
 		super("departments", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -3278444826007773859L;
+
 			{
 				this.add("id");
 				this.add("name");
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -8632228361316516096L;
 
 			{
 			}
@@ -142,10 +153,10 @@ public class Department extends Model
 		return null;
 	}
 
-	public ArrayList<Department> findAll()
+	public ModelList<Department> findAll()
 	{
-		ArrayList<Model> models = this.findAll(this.getClass());
-		ArrayList<Department> departments = new ArrayList<Department>();
+		ModelList<Model> models = this.findAll(this.getClass());
+		ModelList<Department> departments = new ModelList<Department>();
 		for (Object object : models)
 		{
 			departments.add((Department) object);

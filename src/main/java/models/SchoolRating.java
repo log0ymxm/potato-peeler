@@ -76,6 +76,11 @@ public class SchoolRating extends Model
 		super("school_ratings", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -2411028453442137996L;
+
 			{
 				this.add("id");
 				this.add("campus_grounds");
@@ -95,6 +100,11 @@ public class SchoolRating extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7853154103983277683L;
 
 			{
 			}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
+import database.ModelList;
 
 public class Location extends Model
 {
@@ -36,6 +37,11 @@ public class Location extends Model
 		super("locations", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 2737791902918848942L;
+
 			{
 				this.add("id");
 				this.add("name");
@@ -43,6 +49,11 @@ public class Location extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 8237532243305889291L;
 
 			{
 			}
@@ -139,6 +150,17 @@ public class Location extends Model
 			}
 		}
 		return null;
+	}
+
+	public ModelList<Location> findAll()
+	{
+		ModelList<Model> models = this.findAll(this.getClass());
+		ModelList<Location> locations = new ModelList<Location>();
+		for (Object object : models)
+		{
+			locations.add((Location) object);
+		}
+		return locations;
 	}
 
 	public String getId()

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
+import database.ModelList;
 
 public class School extends Model
 {
@@ -21,7 +22,7 @@ public class School extends Model
 	private String name;
 	private String rmpId;
 
-	private ArrayList<Teacher> teachers;
+	private ModelList<Teacher> teachers;
 
 	public School(ResultSet resultSet) throws SQLException
 	{
@@ -41,6 +42,11 @@ public class School extends Model
 		super("schools", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 902679834236568153L;
+
 			{
 				this.add("id");
 				this.add("location_id");
@@ -49,6 +55,11 @@ public class School extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -2751754490470047738L;
 
 			{
 			}
@@ -59,10 +70,10 @@ public class School extends Model
 		this.setLocationId(this.locationId);
 	}
 
-	public static ArrayList<School> findAll()
+	public static ModelList<School> findAll()
 	{
 		System.out.println("find all schools");
-		ArrayList<School> schools = new ArrayList<>();
+		ModelList<School> schools = new ModelList<>();
 
 		Connection connection = DBFactory.getConnection();
 		Statement statement = null;
@@ -151,10 +162,10 @@ public class School extends Model
 		// return null;
 	}
 
-	public static ArrayList<School> findByState(String state_id)
+	public static ModelList<School> findByState(String state_id)
 	{
 		System.out.println("find schools by state");
-		ArrayList<School> schools = new ArrayList<>();
+		ModelList<School> schools = new ModelList<>();
 
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
@@ -269,7 +280,7 @@ public class School extends Model
 		return this.rmpId;
 	}
 
-	public ArrayList<Teacher> getTeachers()
+	public ModelList<Teacher> getTeachers()
 	{
 		return this.teachers;
 	}
@@ -440,7 +451,7 @@ public class School extends Model
 		this.rmpId = rmpId;
 	}
 
-	public void setTeachers(ArrayList<Teacher> teachers)
+	public void setTeachers(ModelList<Teacher> teachers)
 	{
 		this.teachers = teachers;
 	}

@@ -21,6 +21,11 @@ public class TranscriptRecord extends Model
 		super("transcript_records", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 6165318387983757596L;
+
 			{
 				this.add("id");
 				this.add("comment");
@@ -31,6 +36,11 @@ public class TranscriptRecord extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -5135859880364567556L;
 
 			{
 			}

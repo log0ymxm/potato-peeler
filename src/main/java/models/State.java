@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import database.DBFactory;
 import database.Model;
+import database.ModelList;
 
 public class State extends Model
 {
@@ -16,7 +17,7 @@ public class State extends Model
 	private String abbreviation;
 	private String id;
 	private String name;
-	private ArrayList<School> schools;
+	private ModelList<School> schools;
 
 	public State(ResultSet resultSet) throws SQLException
 	{
@@ -30,6 +31,11 @@ public class State extends Model
 		super("states", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 7041524624059868442L;
+
 			{
 				this.add("id");
 				this.add("abbreviation");
@@ -37,6 +43,11 @@ public class State extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -7169027537463382455L;
 
 			{
 			}
@@ -46,9 +57,9 @@ public class State extends Model
 		this.setName(name);
 	}
 
-	public static ArrayList<State> findAll()
+	public static ModelList<State> findAll()
 	{
-		ArrayList<State> states = new ArrayList<>();
+		ModelList<State> states = new ModelList<>();
 
 		Connection connection = DBFactory.getConnection();
 		Statement statement = null;
@@ -145,7 +156,7 @@ public class State extends Model
 		return this.name;
 	}
 
-	public ArrayList<School> getSchools()
+	public ModelList<School> getSchools()
 	{
 		if (this.schools == null)
 		{

@@ -13,11 +13,11 @@
 	    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
     	<init-param>
 			<param-name>com.sun.jersey.config.property.packages</param-name>
-      		<param-value>resources</param-value>
+      		<param-value>web.resources</param-value>
     	</init-param>
     	<init-param>
 			<param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-			<param-value>resources.ResponseCorsFilter</param-value>
+			<param-value>web.resources.ResponseCorsFilter</param-value>
 		</init-param>
     	<load-on-startup>1</load-on-startup>
   	</servlet>

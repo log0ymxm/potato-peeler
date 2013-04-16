@@ -63,14 +63,14 @@ public abstract class Model
 		this.fresh = fresh;
 	}
 
-	protected ArrayList<Model> findAll(Class<? extends Model> caller)
+	protected ModelList<Model> findAll(Class<? extends Model> caller)
 	{
 		System.out.println("model find all");
 
 		Connection connection = DBFactory.getConnection();
 		Statement statement = null;
 		ResultSet resultSet = null;
-		ArrayList<Model> collection = new ArrayList<>();
+		ModelList<Model> collection = new ModelList<>();
 
 		try
 		{

@@ -18,6 +18,7 @@ import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 
+@SuppressWarnings("deprecation")
 public class Grade
 {
 
@@ -128,6 +129,8 @@ public class Grade
 		return null;
 	}
 
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public static void spamClassifier()
 	{
 		// String classString = "weka.classifiers.bayes.NaiveBayes";

@@ -1,4 +1,4 @@
-package resources;
+package web.filters;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;

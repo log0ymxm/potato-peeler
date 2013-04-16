@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import database.DBFactory;
 import database.InvalidModelException;
 import database.Model;
+import database.ModelList;
 
 public class SchoolClass extends Model
 {
@@ -35,6 +36,11 @@ public class SchoolClass extends Model
 		super("classes", new ArrayList<String>()
 		{
 
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -8655573260566651854L;
+
 			{
 				this.add("id");
 				this.add("department_id");
@@ -42,6 +48,11 @@ public class SchoolClass extends Model
 			}
 		}, new ArrayList<String>()
 		{
+
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 4206528093354073916L;
 
 			{
 			}
@@ -51,10 +62,48 @@ public class SchoolClass extends Model
 		this.setLevel(level);
 	}
 
-	public static ArrayList<SchoolClass> findBySchool(String id2)
+	public static ModelList<SchoolClass> findByTeacher(String teacher_id)
 	{
-		// TODO can't do this until classes are related to schools
-		throw new UnsupportedOperationException();
+		System.out.println("find classes by teacher");
+		ModelList<SchoolClass> schoolClasses = new ModelList<>();
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, department_id, level FROM classes JOIN teachers ON teachers.department_id=classes.department_id WHERE teachers.id=?";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, teacher_id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				SchoolClass schoolClass = new SchoolClass(resultSet);
+				schoolClasses.add(schoolClass);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return schoolClasses;
 	}
 
 	public static SchoolClass findOrCreate(Department department, String level)

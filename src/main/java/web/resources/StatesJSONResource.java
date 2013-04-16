@@ -1,6 +1,4 @@
-package resources;
-
-import java.util.ArrayList;
+package web.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -8,8 +6,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import models.State;
-
-import com.google.gson.Gson;
 
 @Path("states")
 public class StatesJSONResource
@@ -20,16 +16,14 @@ public class StatesJSONResource
 	@Produces("application/json")
 	public String getAllSchools(@PathParam("id") String id)
 	{
-		State state = State.findById(id);
-		return new Gson().toJson(state.getSchools());
+		return State.findById(id).toJson();
 	}
 
 	@GET
 	@Produces("application/json")
 	public String getAllStates()
 	{
-		ArrayList<State> states = State.findAll();
-		return new Gson().toJson(states);
+		return State.findAll().toJson();
 	}
 
 	@GET
@@ -39,4 +33,5 @@ public class StatesJSONResource
 	{
 		return State.findById(id).toJson();
 	}
+
 }

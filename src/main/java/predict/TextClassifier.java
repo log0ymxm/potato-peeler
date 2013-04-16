@@ -62,6 +62,8 @@ import weka.core.Instances;
 import weka.core.SparseInstance;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 
+@SuppressWarnings(
+{ "rawtypes", "deprecation", "unchecked" })
 public class TextClassifier
 {
 
