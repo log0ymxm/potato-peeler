@@ -74,7 +74,7 @@ public class SchoolClass extends Model
 		try
 		{
 
-			String query = "SELECT id, department_id, level FROM classes JOIN teachers ON teachers.department_id=classes.department_id WHERE teachers.id=?";
+			String query = "SELECT classes.id, classes.department_id, classes.level FROM classes JOIN teachers ON teachers.department_id=classes.department_id WHERE teachers.id=?";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, teacher_id);
 			resultSet = statement.executeQuery();
