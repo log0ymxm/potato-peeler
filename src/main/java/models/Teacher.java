@@ -169,7 +169,7 @@ public class Teacher extends Model
 			String query = "SELECT id, department_id, first_name, last_name, rmp_id, school_id FROM teachers WHERE school_id=?";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, school_id);
-			resultSet = statement.executeQuery(query);
+			resultSet = statement.executeQuery();
 
 			while (resultSet.next())
 			{
