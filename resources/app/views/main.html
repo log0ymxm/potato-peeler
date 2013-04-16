@@ -1,0 +1,77 @@
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">Grade Predictor</a>
+      <ul class="nav">
+	<!--
+	<li class="active"><a href="#">Home</a></li>
+	-->
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container" id="content">
+  <div class="row">
+    <div class="span12">
+      
+      <h3>Select State</h3>
+      <input type="text" 
+	     placeholder="State" 
+	     ng-model="selectedState" 
+	     typeahead="state.name for state in states | filter:$viewValue"
+	     ng-hide="selectedState"
+	     ng-enabled="states">
+      <div ng-show="selectedState">
+	{{selectedState}}
+	<button ng-click="unselectState()" class="btn btn-danger">&times;</button>
+      </div>
+
+      <div ng-show="selectedState">
+	<h3>Select School</h3>
+	<input type="text" 
+	       placeholder="School" 
+	       ng-model="selectedSchool" 
+	       typeahead="school.name for school in schools | filter:$viewValue"
+	       ng-hide="selectedSchool"
+	       ng-enabled="schools">
+	<div ng-show="selectedSchool">
+	  {{selectedSchool}}
+	  <button ng-click="unselectSchool()" class="btn btn-danger">&times;</button>
+	</div>
+      </div>
+	 
+      <div ng-show="selectedSchool" id="record-selection">
+	<h3>Enter your transcript data</h3>
+	<div ng-show="newRecord">
+	    <input type="text" 
+		   placeholder="Teacher" 
+		   ng-model="newTeacher"
+		   typeahead="teacher.name for teacher in teachers | filter:$viewValue"
+		   ng-enabled="teachers"/>
+
+	    <input type="text" 
+		   placeholder="Class" 
+		   ng-model="newClass"
+		   typeahead="class.name for class in classes | filter:$viewValue"
+		   ng-enabled="classes"/>
+
+	    <input type="text" 
+		   placeholder="Grade" 
+		   ng-model="newGrade"
+		   ng-enabled="newClass"/>
+
+	    <input type="text" 
+		   placeholder="Comments" 
+		   ng-model="newComments"
+		   ng-enabled="newClass"/>
+
+	    <input type="date" 
+		   placeholder="Date"
+		   ng-model="newDate"
+		   ng-enabled="newClass"/>
+	</div>
+      </div>
+      
+    </div>
+  </div>
+</div>

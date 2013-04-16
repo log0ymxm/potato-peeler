@@ -1,0 +1,15 @@
+/* Will be compiled down to a single stylesheet with your sass files */
+@import "bootswatch-scss/journal/variables";
+@import "sass-bootstrap/lib/bootstrap";
+@import "bootswatch-scss/journal/bootswatch";
+
+#content {
+   padding-top: 100px;
+}
+
+#record-selection {
+   ul {
+      list-style-type: none;
+      margin:0;
+   }
+}
