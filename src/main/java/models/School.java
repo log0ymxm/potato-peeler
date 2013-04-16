@@ -25,9 +25,9 @@ public class School extends Model
 
 	public School(ResultSet resultSet) throws SQLException
 	{
-		this(resultSet.getString("id"), resultSet.getString("name"), resultSet
-				.getString("rmp_id"), resultSet.getString("location_id"),
-				false, false);
+		this(resultSet.getString("id"), resultSet.getString("rmp_id"),
+				resultSet.getString("name"),
+				resultSet.getString("location_id"), false, false);
 	}
 
 	public School(String rmpId, String name, Location location)
