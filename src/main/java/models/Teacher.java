@@ -24,36 +24,49 @@ public class Teacher extends Model
 	private String school_id;
 	private ArrayList<School> schools;
 
-	public Teacher(ResultSet resultSet)
+	public Teacher(ResultSet resultSet) throws SQLException
 	{
-		try
-		{
-			this.setId(resultSet.getString("id"));
-			this.setFirst_name(resultSet.getString("first_name"));
-			this.setLast_name(resultSet.getString("last_name"));
-			this.setRmpId(resultSet.getString("rmp_id"));
-			this.setDepartment_id(resultSet.getString("department_id"));
-			this.setSchool_id(resultSet.getString("school_id"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this(resultSet.getString("id"), resultSet.getString("first_name"),
+				resultSet.getString("last_name"),
+				resultSet.getString("rmp_id"), resultSet
+						.getString("department_id"), resultSet
+						.getString("school_id"), false, false);
 	}
 
 	public Teacher(String first_name, String last_name, String rmp_id,
-			Department department, School school)
+			String department_id, String school_id)
 	{
+		this(null, first_name, last_name, rmp_id, department_id, school_id,
+				true, true);
+	}
+
+	public Teacher(String id, String first_name, String last_name,
+			String rmp_id, String department_id, String school_id,
+			Boolean dirty, Boolean fresh)
+	{
+		super("teachers", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("department_id");
+				this.add("first_name");
+				this.add("last_name");
+				this.add("rmp_id");
+				this.add("school_id");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+		this.setId(id);
 		this.setFirst_name(first_name);
 		this.setLast_name(last_name);
 		this.setRmpId(rmp_id);
-		this.setDepartment(department);
-		this.setSchool(school);
-		this.dirty = true;
-		this.fresh = true;
+		this.setDepartment(this.department);
+		this.setSchool(this.school);
 	}
 
 	public static ArrayList<Teacher> findAll()
@@ -141,6 +154,50 @@ public class Teacher extends Model
 		return teacher;
 	}
 
+	public static ArrayList<Teacher> findBySchool(String school_id)
+	{
+		System.out.println("find all teachers");
+		ArrayList<Teacher> teachers = new ArrayList<>();
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT id, department_id, first_name, last_name, rmp_id, school_id FROM teachers WHERE school_id=?";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, school_id);
+			resultSet = statement.executeQuery(query);
+
+			while (resultSet.next())
+			{
+				Teacher teacher = new Teacher(resultSet);
+				teachers.add(teacher);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return teachers;
+	}
+
 	public static Teacher findOrCreate(String first_name, String last_name,
 			String rmp_id, Department department, School school)
 			throws InvalidModelException
@@ -166,7 +223,7 @@ public class Teacher extends Model
 			else
 			{
 				Teacher teacher = new Teacher(first_name, last_name, rmp_id,
-						department, school);
+						department.getId(), school.getId());
 				teacher.save();
 				return teacher;
 			}

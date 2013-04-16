@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import database.Model;
@@ -8,8 +9,30 @@ public class Transcript extends Model
 {
 
 	private Date date;
+
 	private String id;
 	private boolean isPredicted;
+
+	protected Transcript(String id, Date date, Boolean isPredicted,
+			Boolean dirty, Boolean fresh)
+	{
+		super("transcripts", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("date");
+				this.add("is_predicted");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+		// TODO Auto-generated constructor stub
+		throw new UnsupportedOperationException();
+	}
 
 	public Date getDate()
 	{

@@ -7,13 +7,27 @@
 	id="WebApp_ID" version="2.5">
  
 	<display-name>PotatoPeeler</display-name>
- 
+  
+  	<servlet>
+	    <servlet-name>Jersey REST Service</servlet-name>
+	    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    	<init-param>
+			<param-name>com.sun.jersey.config.property.packages</param-name>
+      		<param-value>resources</param-value>
+    	</init-param>
+    	<load-on-startup>1</load-on-startup>
+  	</servlet>
+  	<servlet-mapping>
+    	<servlet-name>Jersey REST Service</servlet-name>
+    	<url-pattern>/api/*</url-pattern>
+  	</servlet-mapping>
+	
 	<!-- Change to "Production" when you are ready to deploy -->
 	<context-param>
 		<param-name>javax.faces.PROJECT_STAGE</param-name>
 		<param-value>Development</param-value>
 	</context-param>
-  
+	
   <context-param>
     <param-name>com.sun.faces.expressionFactory</param-name>
     <param-value>com.sun.el.ExpressionFactoryImpl</param-value>
@@ -21,7 +35,7 @@
 
 	<!-- Welcome page -->
 	<welcome-file-list>
-		<welcome-file>hello.xhtml</welcome-file>
+		<welcome-file>hello.html</welcome-file>
 	</welcome-file-list>
  
 	<!-- JSF mapping -->
@@ -46,7 +60,7 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
-		<url-pattern>*.xhtml</url-pattern>
+		<url-pattern>*.html</url-pattern>
 	</servlet-mapping>
  
 </web-app>

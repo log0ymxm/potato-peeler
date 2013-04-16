@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import database.DBFactory;
 import database.InvalidModelException;
@@ -18,31 +19,37 @@ public class Location extends Model
 	private State state;
 	private String stateId;
 
-	public Location(ResultSet resultSet)
+	public Location(ResultSet resultSet) throws SQLException
 	{
-		System.out.println("construct location from resultset");
-		try
-		{
-			this.setId(resultSet.getString("id"));
-			this.setName(resultSet.getString("name"));
-			this.setStateId(resultSet.getString("state_id"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this(resultSet.getString("id"), resultSet.getString("name"), resultSet
+				.getString("state_id"), false, false);
 	}
 
 	public Location(String name, State state)
 	{
-		System.out.println("location constructor");
+		this(null, name, state.getId(), true, true);
+	}
+
+	public Location(String id, String name, String state_id, Boolean dirty,
+			Boolean fresh)
+	{
+		super("locations", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("name");
+				this.add("state_id");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+		this.setId(id);
 		this.setName(name);
-		this.setState(state);
-		this.dirty = true;
-		this.fresh = true;
+		this.setStateId(state_id);
 	}
 
 	public static Location findById(String id)

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import database.DBFactory;
 import database.InvalidModelException;
@@ -13,29 +14,38 @@ public class Department extends Model
 {
 
 	private String id;
+
 	private String name;
 
-	public Department(ResultSet resultSet)
+	public Department(ResultSet resultSet) throws SQLException
 	{
-		try
-		{
-			this.setId(resultSet.getString("id"));
-			this.setName(resultSet.getString("name"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this(resultSet.getString("id"), resultSet.getString("name"), false,
+				false);
 	}
 
 	public Department(String name)
 	{
+		this(null, name, true, true);
+	}
+
+	public Department(String id, String name, Boolean dirty, Boolean fresh)
+	{
+		super("departments", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("name");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+
+		this.setId(id);
 		this.setName(name);
-		this.dirty = true;
-		this.fresh = true;
 	}
 
 	public static Department findById(String string)
@@ -130,6 +140,17 @@ public class Department extends Model
 			}
 		}
 		return null;
+	}
+
+	public ArrayList<Department> findAll()
+	{
+		ArrayList<Model> models = this.findAll(this.getClass());
+		ArrayList<Department> departments = new ArrayList<Department>();
+		for (Object object : models)
+		{
+			departments.add((Department) object);
+		}
+		return departments;
 	}
 
 	public String getId()

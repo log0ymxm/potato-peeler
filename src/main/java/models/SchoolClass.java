@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import database.DBFactory;
 import database.InvalidModelException;
@@ -19,29 +20,41 @@ public class SchoolClass extends Model
 
 	public SchoolClass(Department department, String level)
 	{
-		System.out.println("school class constructor");
-		this.setDepartment(department);
-		this.setLevel(level);
-		this.dirty = true;
-		this.fresh = true;
+		this(null, department.getId(), level, true, true);
 	}
 
-	public SchoolClass(ResultSet resultSet)
+	public SchoolClass(ResultSet resultSet) throws SQLException
 	{
-		System.out.println("construct school class from resultset");
-		try
+		this(resultSet.getString("id"), resultSet.getString("department_id"),
+				resultSet.getString("level"), false, false);
+	}
+
+	public SchoolClass(String id, String departmentId, String level,
+			Boolean dirty, Boolean fresh)
+	{
+		super("classes", new ArrayList<String>()
 		{
-			this.setId(resultSet.getString("id"));
-			this.setDepartment_id(resultSet.getString("department_id"));
-			this.setLevel(resultSet.getString("level"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
+
+			{
+				this.add("id");
+				this.add("department_id");
+				this.add("level");
+			}
+		}, new ArrayList<String>()
 		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+
+			{
+			}
+		}, dirty, fresh);
+		this.setId(id);
+		this.setDepartment_id(departmentId);
+		this.setLevel(level);
+	}
+
+	public static ArrayList<SchoolClass> findBySchool(String id2)
+	{
+		// TODO can't do this until classes are related to schools
+		throw new UnsupportedOperationException();
 	}
 
 	public static SchoolClass findOrCreate(Department department, String level)

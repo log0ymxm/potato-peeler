@@ -16,22 +16,34 @@ public class State extends Model
 	private String abbreviation;
 	private String id;
 	private String name;
+	private ArrayList<School> schools;
 
-	public State(ResultSet resultSet)
+	public State(ResultSet resultSet) throws SQLException
 	{
-		try
+		this(resultSet.getString("id"), resultSet.getString("abbreviation"),
+				resultSet.getString("name"), false, false);
+	}
+
+	public State(String id, String abbreviation, String name, Boolean dirty,
+			Boolean fresh)
+	{
+		super("states", new ArrayList<String>()
 		{
-			this.setId(resultSet.getString(1));
-			this.setAbbreviation(resultSet.getString(2));
-			this.setName(resultSet.getString(3));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
+
+			{
+				this.add("id");
+				this.add("abbreviation");
+				this.add("name");
+			}
+		}, new ArrayList<String>()
 		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+
+			{
+			}
+		}, dirty, fresh);
+		this.setId(id);
+		this.setAbbreviation(abbreviation);
+		this.setName(name);
 	}
 
 	public static ArrayList<State> findAll()
@@ -131,6 +143,15 @@ public class State extends Model
 	public String getName()
 	{
 		return this.name;
+	}
+
+	public ArrayList<School> getSchools()
+	{
+		if (this.schools == null)
+		{
+			this.schools = School.findByState(this.getId());
+		}
+		return this.schools;
 	}
 
 	@Override

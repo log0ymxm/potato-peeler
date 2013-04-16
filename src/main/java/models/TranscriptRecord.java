@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+
 import database.Model;
 
 public class TranscriptRecord extends Model
@@ -11,6 +13,31 @@ public class TranscriptRecord extends Model
 	private SchoolClass relatedClass;
 	private Teacher teacher;
 	private Transcript transcript;
+
+	public TranscriptRecord(String id, String comment, float grade,
+			String relatedClass_id, String teacher_id, String transcript_id,
+			Boolean dirty, Boolean fresh)
+	{
+		super("transcript_records", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("comment");
+				this.add("grade");
+				this.add("class_id");
+				this.add("teacher_id");
+				this.add("transcript_id");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+		// TODO
+		throw new UnsupportedOperationException();
+	}
 
 	public String getComment()
 	{

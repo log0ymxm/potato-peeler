@@ -23,33 +23,40 @@ public class School extends Model
 
 	private ArrayList<Teacher> teachers;
 
-	public School(ResultSet resultSet)
+	public School(ResultSet resultSet) throws SQLException
 	{
-		try
-		{
-			this.setId(resultSet.getString("id"));
-			this.setName(resultSet.getString("name"));
-			this.setRmpId(resultSet.getString("rmp_id"));
-			this.setLocationId(resultSet.getString("location_id"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this(resultSet.getString("id"), resultSet.getString("name"), resultSet
+				.getString("rmp_id"), resultSet.getString("location_id"),
+				false, false);
 	}
 
 	public School(String rmpId, String name, Location location)
 	{
-		System.out.println("new school (" + rmpId + ") " + name + " "
-				+ location);
+		this(null, rmpId, name, location.getId(), true, true);
+	}
+
+	public School(String id, String rmpId, String name, String locationId,
+			Boolean dirty, Boolean fresh)
+	{
+		super("schools", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("location_id");
+				this.add("name");
+				this.add("rmp_id");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
+		this.setId(id);
 		this.setRmpId(rmpId);
 		this.setName(name);
-		this.setLocation(location);
-		this.dirty = true;
-		this.fresh = true;
+		this.setLocationId(this.locationId);
 	}
 
 	public static ArrayList<School> findAll()
@@ -135,6 +142,57 @@ public class School extends Model
 			}
 		}
 		return school;
+	}
+
+	public static School findByName(String name2)
+	{
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException();
+		// return null;
+	}
+
+	public static ArrayList<School> findByState(String state_id)
+	{
+		System.out.println("find schools by state");
+		ArrayList<School> schools = new ArrayList<>();
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT schools.id, schools.location_id, schools.name, schools.rmp_id FROM schools JOIN locations ON locations.id = schools.location_id WHERE locations.state_id=?";
+			statement = connection.prepareStatement(query);
+			statement.setString(1, state_id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				School school = new School(resultSet);
+				schools.add(school);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return schools;
 	}
 
 	public static School findOrCreate(String rmpId, String name,

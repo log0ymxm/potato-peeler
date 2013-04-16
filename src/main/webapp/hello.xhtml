@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html xmlns:f="http://java.sun.com/jsf/core"      
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:jsf="http://java.sun.com/jsf"   
       xmlns:h="http://java.sun.com/jsf/html">
     <h:head>
         <title>JSF 2.0 Hello World</title>
+		<link jsf:name="css.css" rel="stylesheet" type="text/css" />
     </h:head>
     <h:body>
-    	<h3>JSF 2.0 Hello World Example - hello.xhtml</h3>
+    	<h1>Hello World!!!</h1>
     	<h:form>
     	   <h:inputText value="#{helloBean.name}"></h:inputText>
     	   <h:commandButton value="Welcome Me" action="welcome"></h:commandButton>

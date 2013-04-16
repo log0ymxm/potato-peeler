@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import database.DBFactory;
@@ -31,45 +32,60 @@ public class TeacherRating extends Model
 
 	public TeacherRating(float clarity, String comment, Date date,
 			float easiness, float helpfulness, float rater_interest,
-			SchoolClass classRelation, String rmp_id, Teacher teacher)
+			String classRelation_id, String rmp_id, String teacher_id)
 	{
+		this(null, clarity, comment, date, easiness, helpfulness,
+				rater_interest, classRelation_id, rmp_id, teacher_id, true,
+				true);
+	}
+
+	public TeacherRating(ResultSet resultSet) throws SQLException
+	{
+		this(resultSet.getString("id"), resultSet.getFloat("clarity"),
+				resultSet.getString("comment"), resultSet.getDate("date"),
+				resultSet.getFloat("easiness"), resultSet
+						.getFloat("helpfulness"), resultSet
+						.getFloat("rater_interest"), resultSet
+						.getString("class_id"), resultSet.getString("rmp_id"),
+				resultSet.getString("teacher_id"), false, false);
+
+	}
+
+	public TeacherRating(String id, float clarity, String comment, Date date,
+			float easiness, float helpfulness, float rater_interest,
+			String classRelation_id, String rmp_id, String teacher_id,
+			Boolean dirty, Boolean fresh)
+	{
+		super("teacher_ratings", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("clarity");
+				this.add("comment");
+				this.add("date");
+				this.add("easiness");
+				this.add("helpfulness");
+				this.add("rater_interest");
+				this.add("class_id");
+				this.add("rmp_id");
+				this.add("teacher_id");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
 		this.setClarity(clarity);
 		this.setComment(comment);
 		this.setDate(date);
 		this.setEasiness(easiness);
 		this.setHelpfulness(helpfulness);
 		this.setRaterInterest(rater_interest);
-		this.setRelatedClass(classRelation);
+		this.setRelatedClassId(classRelation_id);
 		this.setRmpId(rmp_id);
-		this.setTeacher(teacher);
-
-		this.dirty = true;
-		this.fresh = true;
-	}
-
-	public TeacherRating(ResultSet resultSet)
-	{
-		try
-		{
-			this.setId(resultSet.getString("id"));
-
-			this.setClarity(resultSet.getFloat("clarity"));
-			this.setComment(resultSet.getString("comment"));
-			this.setDate(resultSet.getDate("date"));
-			this.setEasiness(resultSet.getFloat("easiness"));
-			this.setHelpfulness(resultSet.getFloat("helpfulness"));
-			this.setRaterInterest(resultSet.getFloat("rater_interest"));
-			this.setRelatedClassId(resultSet.getString("class_id"));
-			this.setRmpId(resultSet.getString("rmp_id"));
-			this.setTeacherId(resultSet.getString("teacher_id"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this.setTeacherId(teacher_id);
 	}
 
 	public static TeacherRating findOrCreate(Teacher teacher,
@@ -109,7 +125,7 @@ public class TeacherRating extends Model
 
 				TeacherRating teacherRating = new TeacherRating(clarity,
 						comment, date, easiness, helpfulness, rater_interest,
-						classRelation, rmp_id, teacher);
+						classRelation.getId(), rmp_id, teacher.getId());
 				teacherRating.save();
 				return teacherRating;
 			}

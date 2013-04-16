@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 import database.DBFactory;
@@ -33,46 +34,73 @@ public class SchoolRating extends Model
 	private float schoolReputation;
 	private float socialActivities;
 
-	public SchoolRating(ResultSet resultSet)
+	public SchoolRating(ResultSet resultSet) throws SQLException
 	{
-		try
-		{
-			this.setId(resultSet.getString("id"));
-			this.setCampusGrounds(resultSet.getFloat("campus_grounds"));
-			this.setCampusLocation(resultSet.getFloat("campus_location"));
-			this.setCareerOpportunities(resultSet
-					.getFloat("career_opportunities"));
-			this.setClubsAndEvents(resultSet.getFloat("clubs_and_events"));
-			this.setComment(resultSet.getString("comment"));
-			this.setConditionOfLibrary(resultSet
-					.getFloat("condition_of_library"));
-			this.setDate(resultSet.getDate("date"));
-			this.setInternetSpeed(resultSet.getFloat("internet_speed"));
-			this.setQualityOfFood(resultSet.getFloat("quality_of_food"));
-			this.setRmpId(resultSet.getString("rmp_id"));
-			this.setSchoolId(resultSet.getString("school_id"));
-			this.setSchoolReputation(resultSet.getFloat("school_reputation"));
-			this.setSocialActivities(resultSet.getFloat("social_activities"));
-			this.setSchoolHappiness(resultSet.getFloat("school_happiness"));
-			this.dirty = false;
-			this.fresh = false;
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this(resultSet.getString("id"), resultSet.getString("rmp_id"),
+				resultSet.getString("school_id"), resultSet.getDate("date"),
+				resultSet.getFloat("school_reputation"), resultSet
+						.getFloat("career_opportunities"), resultSet
+						.getFloat("campus_grounds"), resultSet
+						.getFloat("quality_of_food"), resultSet
+						.getFloat("social_activities"), resultSet
+						.getFloat("campus_location"), resultSet
+						.getFloat("condition_of_library"), resultSet
+						.getFloat("internet_speed"), resultSet
+						.getFloat("clubs_and_events"), resultSet
+						.getString("comment"), resultSet
+						.getFloat("school_happiness"), false, false);
 	}
 
-	public SchoolRating(String rmp_id, School school, Date date,
+	public SchoolRating(String rmp_id, String school_id, Date date,
 			float school_reputation, float career_opportunities,
 			float campus_grounds, float quality_of_food,
 			float social_activities, float campus_location,
 			float condition_of_library, float internet_speed,
 			float clubs_and_events, String comment, float school_happiness)
 	{
+		this(null, rmp_id, school_id, date, school_reputation,
+				career_opportunities, campus_grounds, quality_of_food,
+				social_activities, campus_location, condition_of_library,
+				internet_speed, clubs_and_events, comment, school_happiness,
+				true, true);
+	}
+
+	public SchoolRating(String id, String rmp_id, String school_id, Date date,
+			float school_reputation, float career_opportunities,
+			float campus_grounds, float quality_of_food,
+			float social_activities, float campus_location,
+			float condition_of_library, float internet_speed,
+			float clubs_and_events, String comment, float school_happiness,
+			Boolean dirty, Boolean fresh)
+	{
+		super("school_ratings", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("campus_grounds");
+				this.add("campus_location");
+				this.add("career_opportunities");
+				this.add("clubs_and_events");
+				this.add("comment");
+				this.add("condition_of_library");
+				this.add("date");
+				this.add("internet_speed");
+				this.add("quality_of_food");
+				this.add("rmp_id");
+				this.add("school_id");
+				this.add("school_reputation");
+				this.add("social_activities");
+				this.add("school_happiness");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, dirty, fresh);
 		this.setRmpId(rmp_id);
-		this.setSchool(school);
+		this.setSchoolId(school_id);
 		this.setDate(date);
 		this.setSchoolReputation(school_reputation);
 		this.setCareerOpportunities(career_opportunities);
@@ -85,9 +113,6 @@ public class SchoolRating extends Model
 		this.setClubsAndEvents(clubs_and_events);
 		this.setComment(comment);
 		this.setSchoolHappiness(school_happiness);
-
-		this.dirty = true;
-		this.fresh = true;
 	}
 
 	public static SchoolRating findOrCreate(String rmp_id, School school,
@@ -139,11 +164,12 @@ public class SchoolRating extends Model
 				float school_happiness = Float
 						.parseFloat(school_happinessString);
 
-				SchoolRating schoolRating = new SchoolRating(rmp_id, school,
-						date, school_reputation, career_opportunities,
-						campus_grounds, quality_of_food, social_activities,
-						campus_location, condition_of_library, internet_speed,
-						clubs_and_events, comment, school_happiness);
+				SchoolRating schoolRating = new SchoolRating(rmp_id,
+						school.getId(), date, school_reputation,
+						career_opportunities, campus_grounds, quality_of_food,
+						social_activities, campus_location,
+						condition_of_library, internet_speed, clubs_and_events,
+						comment, school_happiness);
 				schoolRating.save();
 				return schoolRating;
 			}
