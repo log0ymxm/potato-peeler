@@ -43,10 +43,13 @@ module.exports = function (grunt) {
         tasks: ['livereload']
       }
     },
+    livereload: {
+        port: 35029
+    },
     connect: {
       livereload: {
         options: {
-          port: 9000,
+          port: 9099,
           // Change this to '0.0.0.0' to access the server from outside.
           hostname: 'localhost',
           middleware: function (connect) {
