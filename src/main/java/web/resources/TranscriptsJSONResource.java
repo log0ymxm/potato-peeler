@@ -6,17 +6,25 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import models.TranscriptRecord;
+import models.TranscriptPrediction;
 
 @Path("transcripts")
-public class TranscriptsPredictionJSONResource
+public class TranscriptsJSONResource
 {
 
 	@GET
-	@Path("{id}/prediction")
+	@Path("{id}/record")
 	@Produces("application/json")
 	public String getTranscriptById(@PathParam("id") String id)
 	{
 		return TranscriptRecord.findById(id).toJson();
 	}
 
+	@GET
+	@Path("{id}/prediction")
+	@Produces("application/json")
+	public String getPredictionById(@PathParam("id") String id)
+	{
+		return TranscriptPrediction.findById(id).toJson();
+	}
 }

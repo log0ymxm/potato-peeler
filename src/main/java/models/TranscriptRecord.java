@@ -13,7 +13,7 @@ public class TranscriptRecord extends Model
 {
 
 	private String comment;
-	private float grade;
+	private Float grade;
 	private String id;
 	private SchoolClass relatedClass;
 	private Teacher teacher;
@@ -117,7 +117,7 @@ public class TranscriptRecord extends Model
 		return this.comment;
 	}
 
-	public float getGrade()
+	public Float getGrade()
 	{
 		return this.grade;
 	}
@@ -141,12 +141,38 @@ public class TranscriptRecord extends Model
 	{
 		return this.transcript;
 	}
-
+	
 	@Override
 	public String isValid()
 	{
-		// TODO
-		throw new UnsupportedOperationException();
+		String valid = null;
+		if (!this.isFresh())
+		{
+			valid = (this.getId() != null) ? null
+					: "An existing transcript record needs an ID";
+		}
+		// comment not required
+		if (valid == null)
+		{
+			valid = (this.getGrade() != null) ? null
+					: "A transcript record needs a grade";
+		}
+		if (valid == null)
+		{
+			valid = (this.getRelatedClass().getId() != null) ? null
+					: "A transcript record's existing class needs needs an ID";
+		}
+		if (valid == null)
+		{
+			valid = (this.getTeacher().getId() != null) ? null
+					: "A transcript record's existing teacher needs an ID";
+		}
+		if (valid == null)
+		{
+			valid = (this.getTranscript().getId() != null) ? null
+					: "A transcript record's existing transcript needs an ID";
+		}
+		return valid;
 	}
 
 	@Override
