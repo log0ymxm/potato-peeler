@@ -55,7 +55,7 @@ public class RMPTeachers
 		}
 
 		// (showing 1 to 20 of 1120 total)
-		String pagesText = doc.select("#commentsBookToggle .profNum").text()
+		String pagesText = doc.select(".profNum").text()
 				.trim();
 		// int currentPageStart = Integer.parseInt(pagesText.split(" ")[1]);
 		// int currentPageEnd = Integer.parseInt(pagesText.split(" ")[3]);
