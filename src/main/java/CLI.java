@@ -11,11 +11,9 @@ import rmp.scrape.RMPSchools;
 import rmp.scrape.RMPTeacherRatings;
 import rmp.scrape.RMPTeachers;
 
-public class CLI
-{
+public class CLI {
 
-	public static void main(String[] args)
-	{
+	public static void main(String[] args) {
 		System.out.println("CLI Runner");
 
 		Options options = new Options();
@@ -43,70 +41,45 @@ public class CLI
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
 
-		try
-		{
+		try {
 			cmd = parser.parse(options, args);
-		}
-		catch (ParseException e)
-		{
+		} catch (ParseException e) {
 			System.out.println("Unexpected exception:" + e.getMessage());
 			System.exit(1);
 		}
 
-		if (cmd.hasOption("1"))
-		{
+		if (cmd.hasOption("1")) {
 			System.out.println("Fetching schools from RMP");
 			RMPSchools.fetch();
-		}
-		else if (cmd.hasOption("2"))
-		{
+		} else if (cmd.hasOption("2")) {
 			System.out.println("Fetching teachers from RMP");
 			System.out.println(cmd.hasOption("s"));
-			if (cmd.hasOption("s"))
-			{
+			if (cmd.hasOption("s")) {
 				RMPTeachers.fetch(cmd.getOptionValue("s"));
-			}
-			else
-			{
+			} else {
 				RMPTeachers.fetch();
 			}
-		}
-		else if (cmd.hasOption("3"))
-		{
+		} else if (cmd.hasOption("3")) {
 			System.out.println("Fetching school ratings from RMP");
-			if (cmd.hasOption("s"))
-			{
+			if (cmd.hasOption("s")) {
 				RMPSchoolRatings.fetch(cmd.getOptionValue("s"));
-			}
-			else
-			{
+			} else {
 				RMPSchoolRatings.fetch();
 			}
-		}
-		else if (cmd.hasOption("4"))
-		{
+		} else if (cmd.hasOption("4")) {
 			System.out.println("Fetching teacher ratings from RMP");
-			if (cmd.hasOption("t"))
-			{
+			if (cmd.hasOption("t")) {
 				RMPTeacherRatings.fetch(cmd.getOptionValue("t"));
-			}
-			else
-			{
+			} else {
 				RMPTeacherRatings.fetch();
 			}
-		}
-		else if (cmd.hasOption("X"))
-		{
+		} else if (cmd.hasOption("X")) {
 			System.out.println("Generating arff file");
 			Grade.generateArff();
-		}
-		else if (cmd.hasOption("G"))
-		{
+		} else if (cmd.hasOption("G")) {
 			System.out.println("Generating a model");
 			Grade.generateModel();
-		}
-		else
-		{
+		} else {
 			// automatically generate the help statement
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar target/PotatoPeeler.jar", options);
