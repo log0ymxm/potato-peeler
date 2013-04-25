@@ -8,10 +8,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayesMultinomialText;
+import weka.classifiers.evaluation.Evaluation;
 import weka.core.Attribute;
 import weka.core.FastVector;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.experiment.InstanceQuery;
@@ -44,37 +47,69 @@ public class Grade
 	{
 		try
 		{
-			Classifier cls = new NaiveBayesMultinomialText();
+			NaiveBayesMultinomialText cls = new NaiveBayesMultinomialText();
 
 			// train
 			Instances data = Grade.getData();
+			data.setClassIndex(0); // easiness
+			Instance instance = data.get(0);
+			System.out.println("An instance: " + instance);
+			System.out.println("Attribute we're classifiying: "
+					+ instance.value(0));
+			Instance nother_instance = data.get(1);
+			System.out.println("Another instance: " + nother_instance);
+			System.out.println("Attribute value: " + nother_instance.value(0));
+			System.out.println("Attribute: " + nother_instance.attribute(0));
 
 			int seed = 42;
-			int folds = 10;
+			int folds = 3;
 
 			Random rand = new Random(seed);
 			Instances randData = new Instances(data);
+			System.out.println("Randomizing data");
 			randData.randomize(rand);
-			randData.stratify(folds);
+			if (randData.classAttribute().isNominal())
+			{
+				System.out.println("Stratifying data");
+				randData.stratify(folds);
+			}
+
+			System.out.println("Perform cross-validation");
+			Evaluation crosEval = new Evaluation(randData);
+			double averageRMSE = 0;
+
+			System.out.println("----------------------------------------");
 
 			for (int n = 0; n < folds; n++)
 			{
 				Instances train = randData.trainCV(folds, n);
 				Instances test = randData.testCV(folds, n);
 
-				data.setClassIndex(4); // easiness
-				cls.buildClassifier(train);
-				System.out.println("Classifier " + n + ":\n" + cls);
-				cls.classifyInstance(test.firstInstance());
+				Classifier copyCls = AbstractClassifier.makeCopy(cls);
+				copyCls.buildClassifier(train);
+				crosEval.evaluateModel(copyCls, test);
+				System.out.println("Classifier " + n + ":\n" + copyCls);
+				// a separate evaluation for each fold
+				Evaluation eval = new Evaluation(train);
+				eval.evaluateModel(copyCls, test);
+				System.out.println("eval: " + eval.toSummaryString());
+				averageRMSE += eval.rootMeanSquaredError();
 
-				// serialize model
-				ObjectOutputStream oos = new ObjectOutputStream(
-						new FileOutputStream("data/easiness-prediction-" + n
-								+ ".model"));
-				oos.writeObject(cls);
-				oos.flush();
-				oos.close();
 			}
+			// output evaluation
+			System.out.println("Evaluation: \n" + crosEval.toSummaryString());
+			System.out.println("Evaluation RMSE: \n"
+					+ crosEval.rootMeanSquaredError());
+			// this should output the same value...
+			System.out.println("Average RMSE (of the previous folds): "
+					+ (averageRMSE / folds));
+
+			// serialize model
+			ObjectOutputStream oos = new ObjectOutputStream(
+					new FileOutputStream("data/easiness-prediction.model"));
+			oos.writeObject(cls);
+			oos.flush();
+			oos.close();
 
 		}
 		catch (Exception e)
@@ -87,10 +122,10 @@ public class Grade
 	public static Instances getData()
 	{
 		String query = "SELECT "
-				// + "    teacher_ratings.comment, "
+				+ "    teacher_ratings.easiness,"
 				+ "    schools.name AS schools_name, teachers.last_name, "
 				+ "    teachers.first_name, "
-				+ "    teacher_ratings.easiness, teacher_ratings.helpfulness, "
+				+ "    teacher_ratings.helpfulness, "
 				+ "    teacher_ratings.clarity, teacher_ratings.rater_interest, "
 				+ "    teacher_ratings.date, classes.level, departments.name AS departments_name,"
 				+ "    teacher_ratings.comment "
@@ -114,7 +149,7 @@ public class Grade
 
 			// Convert ratings to categorical values since ratings are discrete.
 			NumericToNominal numToNom = new NumericToNominal();
-			numToNom.setAttributeIndices("4,5,6,7");
+			numToNom.setAttributeIndices("1,5,6,7");
 			numToNom.setInputFormat(data);
 			data = Filter.useFilter(data, numToNom);
 
