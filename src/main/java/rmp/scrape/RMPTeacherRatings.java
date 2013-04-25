@@ -47,7 +47,7 @@ public class RMPTeacherRatings
 		try
 		{
 			System.out.println("Fetching: " + url);
-			doc = Jsoup.connect(url).get();
+			doc = Jsoup.connect(url).timeout(0).get();
 		}
 		catch (IOException e)
 		{

@@ -46,7 +46,7 @@ public class RMPTeachers
 		try
 		{
 			System.out.println("Fetching: " + url);
-			doc = Jsoup.connect(url).get();
+			doc = Jsoup.connect(url).timeout(0).get();
 		}
 		catch (IOException e)
 		{
@@ -88,11 +88,12 @@ public class RMPTeachers
 
 			try
 			{
-				System.out.println("---");
-				System.out.println("Saving: " + first_name + " (" + rmp_id
-						+ ")");
 				Department department = Department
 						.findOrCreate(department_name);
+				
+				System.out.println("---");
+				System.out.println("Saving: " + first_name + " " + last_name + " " + department + " (" + rmp_id + ")");
+				
 				Teacher.findOrCreate(first_name, last_name, rmp_id, department,
 						school);
 			}
