@@ -1,3 +1,5 @@
+doc\nppBackup
+nppBackup
 target
 .DS_Store
 .classpath
@@ -5,3 +7,5 @@ target
 .settings
 bin/
 data/
+.md
+.bak

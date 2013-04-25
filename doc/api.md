@@ -7,5 +7,6 @@
 # GET /schools/{id}/classes
 # GET /teachers/{id}
 # GET /classes/{id}
-# POST /users
-# POST /users/{id}/prediction
+# POST /transcripts/{id}
+# POST /transcripts/{id}/record
+# GET /transcripts/{id}/prediction
