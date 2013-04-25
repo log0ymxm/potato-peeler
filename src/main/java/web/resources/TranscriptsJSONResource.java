@@ -25,6 +25,7 @@ public class TranscriptsJSONResource
 	@Produces("application/json")
 	public String getPredictionById(@PathParam("id") String id)
 	{
+		//TODO: just place holding for now
 		return TranscriptPrediction.findById(id).toJson();
 	}
 }
