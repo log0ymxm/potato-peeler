@@ -36,6 +36,7 @@ angular.module('peelerFrontendApp')
 	$scope.$watch('selectedState', function() {
 	    if ($scope.selectedState) {
 		var state_id = $scope.states.filter(function(state) {return (state.name === $scope.selectedState);})[0].id;
+                console.log('selected_state', state_id);
 		$http.get(apiUrl + 'states/' + state_id + '/schools').then(function(response) {
 		    console.log('schools', response.data);
 		    $scope.schools = response.data;
@@ -54,9 +55,10 @@ angular.module('peelerFrontendApp')
 	$scope.$watch('selectedSchool', function() {
 	    if ($scope.selectedSchool) {
 		var school_id = $scope.schools.filter(function(school) {return (school.name === $scope.selectedSchool);})[0].id;
+                console.log('selected school', school_id);
 		$http.get(apiUrl + 'schools/' + school_id + '/teachers').then(function(response) {
 		    // combine first & last name for display
-		    $scope.teachers = response.data.map(function(teacher) { 
+		    $scope.teachers = response.data.map(function(teacher) {
 			teacher.name = teacher.first_name + ' ' + teacher.last_name;
 			return teacher;
 		    });
@@ -69,17 +71,42 @@ angular.module('peelerFrontendApp')
 	// teacher interaction
 	$scope.$watch('newTeacher', function() {
 	    if ($scope.newTeacher) {
-		var teacher = $scope.teachers.filter(function(teacher) { return (teacher.name === $scope.newTeacher); });
+		var teacher = $scope.teachers.filter(function(teacher) { return (teacher.name === $scope.newTeacher); })[0];
+                console.log('selected teacher', teacher);
 		$http.get(apiUrl + 'teachers/' + teacher.id + '/classes').then(function(response) {
-		    console.log('classes', response.data);
+		    console.log('classes', response.data.length, response.data);
 		    $scope.classes = response.data;
 		});
 	    }
 	});
-	
-	
-	$scope.records = [{}];
-	$scope.newRecord = function() {
-	    $scope.records.push({});
+
+        $scope.grades = ["A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "D-", "F"];
+
+	$scope.transcript = [];
+	$scope.addNewRecord = function() {
+            var record = {
+                teacher: $scope.newTeacher,
+                class: $scope.newClass,
+                grade: $scope.newGrade,
+                comment: $scope.newComments,
+                date: $scope.newDate
+            };
+
+            $scope.newTeacher = null;
+            $scope.newClass = null;
+            $scope.newGrade = null;
+            $scope.newComments = null;
+            $scope.newDate = null;
+
+	    $scope.transcript.push(record);
 	};
+
+        $scope.editRecord = function(record) {
+            // TODO
+        };
+
+        $scope.deleteRecord = function(record) {
+            // TODO
+        };
+
     }]);

@@ -4,12 +4,16 @@
 @import "bootswatch-scss/journal/bootswatch";
 
 #content {
-   padding-top: 100px;
+  padding-top: 100px;
 }
 
 #record-selection {
-   ul {
-      list-style-type: none;
-      margin:0;
-   }
+  ul {
+    list-style-type: none;
+    margin:0;
+  }
+}
+
+.right {
+  text-align: right;
 }
