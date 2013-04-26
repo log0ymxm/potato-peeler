@@ -5,7 +5,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import predict.Grade;
+import predict.ModelBuilder;
 import rmp.scrape.RMPSchoolRatings;
 import rmp.scrape.RMPSchools;
 import rmp.scrape.RMPTeacherRatings;
@@ -75,10 +75,10 @@ public class CLI {
 			}
 		} else if (cmd.hasOption("X")) {
 			System.out.println("Generating arff file");
-			Grade.generateArff();
+			ModelBuilder.generateArff();
 		} else if (cmd.hasOption("G")) {
 			System.out.println("Generating a model");
-			Grade.generateModel();
+			ModelBuilder.generateModel();
 		} else {
 			// automatically generate the help statement
 			HelpFormatter formatter = new HelpFormatter();
