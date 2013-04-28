@@ -12,8 +12,7 @@ import database.InvalidModelException;
 import database.Model;
 import database.ModelList;
 
-public class School extends Model
-{
+public class School extends Model {
 
 	private String id;
 
@@ -24,23 +23,19 @@ public class School extends Model
 
 	private ModelList<Teacher> teachers;
 
-	public School(ResultSet resultSet) throws SQLException
-	{
+	public School(ResultSet resultSet) throws SQLException {
 		this(resultSet.getString("id"), resultSet.getString("rmp_id"),
 				resultSet.getString("name"),
 				resultSet.getString("location_id"), false, false);
 	}
 
-	public School(String rmpId, String name, Location location)
-	{
+	public School(String rmpId, String name, Location location) {
 		this(null, rmpId, name, location.getId(), true, true);
 	}
 
 	public School(String id, String rmpId, String name, String locationId,
-			Boolean dirty, Boolean fresh)
-	{
-		super("schools", new ArrayList<String>()
-		{
+			Boolean dirty, Boolean fresh) {
+		super("schools", new ArrayList<String>() {
 
 			/**
 			 * 
@@ -53,8 +48,7 @@ public class School extends Model
 				this.add("name");
 				this.add("rmp_id");
 			}
-		}, new ArrayList<String>()
-		{
+		}, new ArrayList<String>() {
 
 			/**
 			 * 
@@ -67,11 +61,11 @@ public class School extends Model
 		this.setId(id);
 		this.setRmpId(rmpId);
 		this.setName(name);
-		this.setLocationId(this.locationId);
+		// this.setLocationId(this.locationId);
+		this.setLocationId(locationId);
 	}
 
-	public static ModelList<School> findAll()
-	{
+	public static ModelList<School> findAll() {
 		System.out.println("find all schools");
 		ModelList<School> schools = new ModelList<>();
 
@@ -79,91 +73,70 @@ public class School extends Model
 		Statement statement = null;
 		ResultSet resultSet = null;
 
-		try
-		{
+		try {
 
 			String query = "SELECT id, location_id, name, rmp_id FROM schools";
 			statement = connection.createStatement();
 			resultSet = statement.executeQuery(query);
 
-			while (resultSet.next())
-			{
+			while (resultSet.next()) {
 				School school = new School(resultSet);
 				schools.add(school);
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.exit(1);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				resultSet.close();
 				statement.close();
 				DBFactory.closeConnection(connection);
-			}
-			catch (Exception exception)
-			{
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 		}
 		return schools;
 	}
 
-	public static School findById(String id)
-	{
+	public static School findById(String id) {
 		School school = null;
 
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 
-		try
-		{
+		try {
 
 			String query = "SELECT id, location_id, name, rmp_id FROM schools WHERE id = ? LIMIT 1";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, id);
 			resultSet = statement.executeQuery();
 
-			while (resultSet.next())
-			{
+			while (resultSet.next()) {
 				school = new School(resultSet);
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.exit(1);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				resultSet.close();
 				statement.close();
 				DBFactory.closeConnection(connection);
-			}
-			catch (Exception exception)
-			{
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 		}
 		return school;
 	}
 
-	public static School findByName(String name2)
-	{
+	public static School findByName(String name2) {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException();
 		// return null;
 	}
 
-	public static ModelList<School> findByState(String state_id)
-	{
+	public static ModelList<School> findByState(String state_id) {
 		System.out.println("find schools by state");
 		ModelList<School> schools = new ModelList<>();
 
@@ -171,35 +144,26 @@ public class School extends Model
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 
-		try
-		{
+		try {
 
 			String query = "SELECT schools.id, schools.location_id, schools.name, schools.rmp_id FROM schools JOIN locations ON locations.id = schools.location_id WHERE locations.state_id=?";
 			statement = connection.prepareStatement(query);
 			statement.setString(1, state_id);
 			resultSet = statement.executeQuery();
 
-			while (resultSet.next())
-			{
+			while (resultSet.next()) {
 				School school = new School(resultSet);
 				schools.add(school);
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.exit(1);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				resultSet.close();
 				statement.close();
 				DBFactory.closeConnection(connection);
-			}
-			catch (Exception exception)
-			{
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 		}
@@ -207,47 +171,35 @@ public class School extends Model
 	}
 
 	public static School findOrCreate(String rmpId, String name,
-			Location location) throws InvalidModelException
-	{
+			Location location) throws InvalidModelException {
 		String findQuery = "SELECT id, rmp_id, name, location_id FROM schools WHERE rmp_id = ? AND name like ? AND location_id = ? LIMIT 1";
 		Connection connection = DBFactory.getConnection();
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
-		try
-		{
+		try {
 
 			statement = connection.prepareStatement(findQuery);
 			statement.setString(1, rmpId);
 			statement.setString(2, name);
 			statement.setString(3, location.getId());
 			resultSet = statement.executeQuery();
-			if (resultSet.next())
-			{
+			if (resultSet.next()) {
 				System.out.println("School already exists");
 				return new School(resultSet);
-			}
-			else
-			{
+			} else {
 				School school = new School(rmpId, name, location);
 				school.save();
 				return school;
 			}
-		}
-		catch (SQLException e)
-		{
+		} catch (SQLException e) {
 			e.printStackTrace();
 			System.exit(1);
-		}
-		finally
-		{
-			try
-			{
+		} finally {
+			try {
 				statement.close();
 				resultSet.close();
 				DBFactory.closeConnection(connection);
-			}
-			catch (SQLException e)
-			{
+			} catch (SQLException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}
@@ -255,57 +207,46 @@ public class School extends Model
 		return null;
 	}
 
-	public String getId()
-	{
+	public String getId() {
 		return this.id;
 	}
 
-	public Location getLocation()
-	{
+	public Location getLocation() {
 		return this.location;
 	}
 
-	public String getLocationId()
-	{
+	public String getLocationId() {
 		return this.locationId;
 	}
 
-	public String getName()
-	{
+	public String getName() {
 		return this.name;
 	}
 
-	public String getRmpId()
-	{
+	public String getRmpId() {
 		return this.rmpId;
 	}
 
-	public ModelList<Teacher> getTeachers()
-	{
+	public ModelList<Teacher> getTeachers() {
 		return this.teachers;
 	}
 
 	@Override
-	public String isValid()
-	{
+	public String isValid() {
 		String valid = null;
-		if (!this.isFresh())
-		{
+		if (!this.isFresh()) {
 			valid = (this.getId() != null) ? null
 					: "An existing school requires an ID";
 		}
-		if (valid == null)
-		{
+		if (valid == null) {
 			valid = (this.getName() != null) ? null
 					: "A school requires a name";
 		}
-		if (valid == null)
-		{
+		if (valid == null) {
 			valid = (this.getLocationId() != null) ? null
 					: "A school requires a location id";
 		}
-		if (valid == null)
-		{
+		if (valid == null) {
 			valid = (this.getRmpId() != null) ? null
 					: "A school requires an rmp_id";
 		}
@@ -313,146 +254,119 @@ public class School extends Model
 	}
 
 	@Override
-	public boolean save() throws InvalidModelException
-	{
+	public boolean save() throws InvalidModelException {
 		int result = 0;
 
 		String error = this.isValid();
-		if (error == null)
-		{
+		if (error == null) {
 			Connection connection = DBFactory.getConnection();
 			PreparedStatement insertNewSchool = null;
 			PreparedStatement selectId = null;
 			ResultSet resultSet = null;
-			if (this.isFresh())
-			{
+			if (this.isFresh()) {
 				String insertQuery = "INSERT INTO schools (rmp_id, location_id, name) VALUES (?, ?, ?)";
-				try
-				{
+				try {
 					insertNewSchool = connection.prepareStatement(insertQuery);
 					insertNewSchool.setString(1, this.getRmpId());
-					insertNewSchool.setString(2, this.getLocation().getId());
+//					insertNewSchool.setString(2, this.getLocation().getId());
+					insertNewSchool.setString(2, this.locationId);
 					insertNewSchool.setString(3, this.getName());
 					result = insertNewSchool.executeUpdate();
-					if (result > 0)
-					{
+					if (result > 0) {
 						String idQuery = "SELECT id FROM schools WHERE rmp_id = ? AND location_id = ? AND name like ?";
 						selectId = connection.prepareStatement(idQuery);
 						selectId.setString(1, this.getRmpId());
-						selectId.setString(2, this.getLocation().getId());
+//						selectId.setString(2, this.getLocation().getId());
+						selectId.setString(2, this.locationId);
 						selectId.setString(3, this.getName());
 						resultSet = selectId.executeQuery();
-						if (resultSet.next())
-						{
+						if (resultSet.next()) {
 							String id = resultSet.getString(1);
 							System.out.println("save get id: " + id);
 							this.setId(id);
 							this.fresh = false;
 							this.dirty = false;
 							return true;
-						}
-						else
-						{
+						} else {
 							return false;
 						}
 					}
-				}
-				catch (SQLException e)
-				{
+				} catch (SQLException e) {
 					e.printStackTrace();
 					System.exit(1);
-				}
-				finally
-				{
-					try
-					{
+				} finally {
+					try {
 						insertNewSchool.close();
-						selectId.close();
-						resultSet.close();
+
+						if (selectId != null)
+							selectId.close();
+
+						if (resultSet != null)
+							resultSet.close();
+						
 						DBFactory.closeConnection(connection);
-					}
-					catch (SQLException e)
-					{
+					} catch (SQLException e) {
 						e.printStackTrace();
 						System.exit(1);
 					}
 				}
 
-			}
-			else
-			{
+			} else {
 				String updateQuery = "UPDATE schools SET rmp_id=?, name=?, location_id=? WHERE id=?";
 				PreparedStatement updateSchool = null;
-				try
-				{
+				try {
 					updateSchool = connection.prepareStatement(updateQuery);
 					updateSchool.setString(1, this.getRmpId());
 					updateSchool.setString(2, this.getName());
 					updateSchool.setString(3, this.getLocation().getId());
 					updateSchool.setString(4, this.getId());
 					result = updateSchool.executeUpdate();
-					if (result > 0)
-					{
+					if (result > 0) {
 						this.dirty = false;
 						return true;
 					}
-				}
-				catch (SQLException e)
-				{
+				} catch (SQLException e) {
 					e.printStackTrace();
 					System.exit(1);
-				}
-				finally
-				{
-					try
-					{
+				} finally {
+					try {
 						updateSchool.close();
 						DBFactory.closeConnection(connection);
-					}
-					catch (SQLException e)
-					{
+					} catch (SQLException e) {
 						e.printStackTrace();
 						System.exit(1);
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			throw new InvalidModelException(error);
 		}
 		return false;
 	}
 
-	public void setId(String id)
-	{
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	public void setLocation(Location location)
-	{
+	public void setLocation(Location location) {
 		this.location = location;
 		this.setLocationId(location.getId());
 	}
 
-	public void setLocationId(String locationId)
-	{
+	public void setLocationId(String locationId) {
 		this.locationId = locationId;
 		this.location = null;
 	}
 
-	public void setName(String name)
-	{
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public void setRmpId(String rmpId)
-	{
+	public void setRmpId(String rmpId) {
 		this.rmpId = rmpId;
 	}
 
-	public void setTeachers(ModelList<Teacher> teachers)
-	{
+	public void setTeachers(ModelList<Teacher> teachers) {
 		this.teachers = teachers;
 	}
 

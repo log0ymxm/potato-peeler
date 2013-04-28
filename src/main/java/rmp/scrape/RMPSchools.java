@@ -15,39 +15,31 @@ import org.jsoup.select.Elements;
 
 import database.InvalidModelException;
 
-public class RMPSchools
-{
+public class RMPSchools {
 
 	private final static String urlTemplate = "http://www.ratemyprofessors.com/SelectSchool.jsp?country=0&stateselect=%s";
 
-	public static void fetch()
-	{
+	public static void fetch() {
 		ArrayList<State> states = State.findAll();
-		for (State state : states)
-		{
+		for (State state : states) {
 			RMPSchools.fetchByState(state);
 		}
 		System.out.println("All States Scraped");
 	}
 
-	public static void fetchByState(State state)
-	{
+	public static void fetchByState(State state) {
 		String url = String.format(RMPSchools.urlTemplate,
 				state.getAbbreviation());
 		Document doc = null;
-		try
-		{
-			doc = Jsoup.connect(url).get();
-		}
-		catch (IOException e)
-		{
+		try {
+			doc = Jsoup.connect(url).timeout(0).get();
+		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 		Elements schoolElements = doc.select("#ratingTable .entry");
 		Iterator<Element> schoolIterator = schoolElements.iterator();
-		while (schoolIterator.hasNext())
-		{
+		while (schoolIterator.hasNext()) {
 			Element schoolEntry = schoolIterator.next();
 
 			String name = schoolEntry.select(".schoolName a").text();
@@ -55,15 +47,12 @@ public class RMPSchools
 					.replace("school id: ", "");
 			String city = schoolEntry.select(".schoolCity").text();
 
-			try
-			{
+			try {
 				System.out.println("---");
-				System.out.println("Saving: " + name + " (" + rmpId + ")");
+				System.out.println("Saving: " + name + ", city: " + city + " (" + rmpId + ")");
 				Location location = Location.findOrCreate(state, city);
 				School.findOrCreate(rmpId, name, location);
-			}
-			catch (InvalidModelException e)
-			{
+			} catch (InvalidModelException e) {
 				e.printStackTrace();
 				System.exit(1);
 			}

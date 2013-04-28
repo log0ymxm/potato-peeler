@@ -46,7 +46,7 @@ public class RMPTeachers
 		try
 		{
 			System.out.println("Fetching: " + url);
-			doc = Jsoup.connect(url).get();
+			doc = Jsoup.connect(url).timeout(0).get();
 		}
 		catch (IOException e)
 		{
@@ -55,7 +55,7 @@ public class RMPTeachers
 		}
 
 		// (showing 1 to 20 of 1120 total)
-		String pagesText = doc.select("#commentsBookToggle .profNum").text()
+		String pagesText = doc.select(".profNum").text()
 				.trim();
 		// int currentPageStart = Integer.parseInt(pagesText.split(" ")[1]);
 		// int currentPageEnd = Integer.parseInt(pagesText.split(" ")[3]);
@@ -88,11 +88,12 @@ public class RMPTeachers
 
 			try
 			{
-				System.out.println("---");
-				System.out.println("Saving: " + first_name + " (" + rmp_id
-						+ ")");
 				Department department = Department
 						.findOrCreate(department_name);
+				
+				System.out.println("---");
+				System.out.println("Saving: " + first_name + " " + last_name + " " + department + " (" + rmp_id + ")");
+				
 				Teacher.findOrCreate(first_name, last_name, rmp_id, department,
 						school);
 			}

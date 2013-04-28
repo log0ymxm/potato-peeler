@@ -13,11 +13,11 @@
 <div class="container" id="content">
   <div class="row">
     <div class="span12">
-      
+
       <h3>Select State</h3>
-      <input type="text" 
-	     placeholder="State" 
-	     ng-model="selectedState" 
+      <input type="text"
+	     placeholder="State"
+	     ng-model="selectedState"
 	     typeahead="state.name for state in states | filter:$viewValue"
 	     ng-hide="selectedState"
 	     ng-enabled="states">
@@ -26,11 +26,11 @@
 	<button ng-click="unselectState()" class="btn btn-danger">&times;</button>
       </div>
 
-      <div ng-show="selectedState">
+      <div ng-show-blip="selectedState">
 	<h3>Select School</h3>
-	<input type="text" 
-	       placeholder="School" 
-	       ng-model="selectedSchool" 
+	<input type="text"
+	       placeholder="School"
+	       ng-model="selectedSchool"
 	       typeahead="school.name for school in schools | filter:$viewValue"
 	       ng-hide="selectedSchool"
 	       ng-enabled="schools">
@@ -39,39 +39,111 @@
 	  <button ng-click="unselectSchool()" class="btn btn-danger">&times;</button>
 	</div>
       </div>
-	 
-      <div ng-show="selectedSchool" id="record-selection">
+
+      <div ng-show-blip="selectedSchool" id="record-selection">
 	<h3>Enter your transcript data</h3>
-	<div ng-show="newRecord">
-	    <input type="text" 
-		   placeholder="Teacher" 
-		   ng-model="newTeacher"
-		   typeahead="teacher.name for teacher in teachers | filter:$viewValue"
-		   ng-enabled="teachers"/>
-
-	    <input type="text" 
-		   placeholder="Class" 
-		   ng-model="newClass"
-		   typeahead="class.name for class in classes | filter:$viewValue"
-		   ng-enabled="classes"/>
-
-	    <input type="text" 
-		   placeholder="Grade" 
-		   ng-model="newGrade"
-		   ng-enabled="newClass"/>
-
-	    <input type="text" 
-		   placeholder="Comments" 
-		   ng-model="newComments"
-		   ng-enabled="newClass"/>
-
-	    <input type="date" 
-		   placeholder="Date"
-		   ng-model="newDate"
-		   ng-enabled="newClass"/>
-	</div>
+	<div ng-show-blip="newRecord">
+          <div class="row">
+            <div class="span3">
+	      <input type="text"
+		     placeholder="Teacher"
+                     class="input-medium"
+		     ng-model="newTeacher"
+		     typeahead="teacher.name for teacher in teachers | filter:$viewValue"
+		     ng-enabled="teachers"/>
+            </div>
+            <div class="span2">
+	      <input type="text"
+		     placeholder="Class"
+                     class="input-small"
+		     ng-model="newClass"
+		     typeahead="class.level for class in classes | filter:$viewValue"
+		     ng-enabled="classes"/>
+            </div>
+            <div class="span2">
+	      <input type="text"
+		     placeholder="Grade"
+                     class="input-mini"
+                     typeahead="grade for grade in grades | filter:$viewValue"
+		     ng-model="newGrade"
+		     ng-enabled="newClass"/>
+            </div>
+            <div class="span3">
+	      <textarea placeholder="Comments"
+		        ng-model="newComments"
+		        ng-enabled="newClass"></textarea>
+            </div>
+            <div class="span2">
+              <!-- TODO don't use data, instead use semester & year -->
+	      <input type="date"
+		     placeholder="Date"
+                     class="input-small"
+		     ng-model="newDate"
+		     ng-enabled="newClass"/>
+            </div>
+	  </div>
+          <div class="row">
+            <div class="span1 offset11 right">
+              <button class="btn btn-success" ng-click="addNewRecord()">
+                Add Record
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-      
+
+      <div ng-repeat="record in transcript" id="transcript">
+        <div class="row">
+          <div class="span2"> {{record.teacher}} </div>
+          <div class="span2"> {{record.class}} </div>
+          <div class="span1"> {{record.grade}} </div>
+          <div class="span4"> {{record.comment}} </div>
+          <div class="span1"> {{record.date}} </div>
+          <div class="span2">
+            <a ng-click="editRecord(record)">Edit</a>
+            |
+            <a ng-click="deleteRecord(record)">Delete</a>
+          </div>
+        </div>
+      </div>
+
+      <div id="upcoming-transcript">
+        <h3>Enter your expected schedule for next term</h3>
+        <!-- TODO allow same or different school -->
+        <!-- TODO term -->
+        <div class="row">
+          <div class="span3">
+            <input type="text"
+                   class="input-medium"
+                   placeholder="Teacher" />
+          </div>
+          <div class="span2">
+            <input type="text"
+                   class="input-small"
+                   placeholder="Class" />
+          </div>
+          <div class="span1">
+            <button class="btn btn-success">Add New Class</button>
+          </div>
+        </div>
+      </div>
+
+      <div ng-repeat="record in schedule">
+        <div class="row">
+          <div class="span2">
+            {{ record.teacher }}
+          </div>
+          <div class="span2">
+            {{ record.class }}
+          </div>
+          <div class="span2">
+            <a ng-click="editRecord(record)">Edit</a>
+            |
+            <a ng-click="deleteRecord(record)">Delete</a>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

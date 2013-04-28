@@ -45,7 +45,7 @@ public class RMPSchoolRatings
 		try
 		{
 			System.out.println("Fetching: " + url);
-			doc = Jsoup.connect(url).get();
+			doc = Jsoup.connect(url).timeout(0).get();
 		}
 		catch (IOException e)
 		{
@@ -54,8 +54,7 @@ public class RMPSchoolRatings
 		}
 
 		// get pages
-		int totalItems = Integer.parseInt(doc.select("#noRatings strong")
-				.text());
+		int totalItems = Integer.parseInt(doc.select("#noRatings strong").text().split(" ")[0]);
 		int totalPages = (totalItems / 20) + 1;
 
 		Elements schoolRatingsElements = doc
