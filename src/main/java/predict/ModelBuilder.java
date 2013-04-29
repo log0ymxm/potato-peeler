@@ -1,12 +1,15 @@
 package predict;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
+import models.Transcript;
 import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.Evaluation;
@@ -23,12 +26,12 @@ import weka.core.Instances;
 import weka.core.converters.ArffSaver;
 import weka.experiment.InstanceQuery;
 import weka.filters.Filter;
-import weka.filters.supervised.instance.Resample;
 import weka.filters.unsupervised.attribute.NominalToBinary;
 import weka.filters.unsupervised.attribute.NominalToString;
 import weka.filters.unsupervised.attribute.NumericToBinary;
 import weka.filters.unsupervised.attribute.NumericToNominal;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.filters.unsupervised.instance.Resample;
 
 public class ModelBuilder
 {
@@ -126,6 +129,10 @@ public class ModelBuilder
 	{
 		try
 		{
+			System.out.println("======================================");
+			System.out.println("Calculating " + ModelBuilder.folds
+					+ "-fold evaluation on a dataset of " + data.size()
+					+ " instances and " + data.numAttributes() + " features.");
 			Evaluation eval = new Evaluation(data);
 			Random rand = new Random(ModelBuilder.seed);
 			eval.crossValidateModel(cls, data, ModelBuilder.folds, rand);
@@ -175,21 +182,31 @@ public class ModelBuilder
 	{
 		try
 		{
-			double sampleSize = 1;
+			double sampleSize = 100;
 			System.out.println("Fetching instances for " + sampleSize
 					+ "% of available data");
 			Instances data = ModelBuilder.getBinaryData(1);
 			System.out.println("Learning on " + data.numAttributes()
 					+ " features");
 
-			int index = 0;
-			Vote voter = ModelBuilder.buildEnsembleOnAttribute(data, index);
+			Vote[] voters = new Vote[5];
+			for (int i = 0; i < 5; i++)
+			{
+				data.setClassIndex(i);
+				Vote voter = ModelBuilder.buildEnsembleOnAttribute(data, i);
 
-			ModelBuilder.evaluateModel(data, voter);
+				String name = "data/easiness-vote-" + (i + 1) + ".model";
+				ModelBuilder.saveModel(voter, name);
+				voters[i] = voter;
+			}
 
-			String name = "data/easiness-vote-" + (index + 1) + ".model";
-			ModelBuilder.saveModel(voter, name);
+			for (int i = 0; i < 5; i++)
+			{
+				Vote voter = voters[i];
+				data.setClassIndex(i);
+				ModelBuilder.evaluateModel(data, voter);
 
+			}
 		}
 		catch (Exception e)
 		{
@@ -206,33 +223,88 @@ public class ModelBuilder
 		data = ModelBuilder.prepareNominalToBinary(data);
 		System.out.println("prepareNominalToBinary num attrs: "
 				+ data.numAttributes());
-		data = ModelBuilder.prepareCommentVector(data);
-		System.out.println("prepareCommentVector num attrs: "
-				+ data.numAttributes());
-		data = ModelBuilder.prepareWithoutDate(data);
+		// ModelBuilder.printAttributeNames(data);
 
 		data = ModelBuilder.prepareNumericToBinary(data);
 
 		return data;
 	}
 
-	public static Instances getData(double sample)
+	public static Instances getBinaryInstance(Transcript transcript)
 	{
+		// should take all the fields we predict on, and generate an
+		// instance that matches in attributes to what we generated our
+		// model on
 		String query = "SELECT "
-				+ "    teacher_ratings.easiness," // Note that this is our class
-													// attribute
-				+ "    schools.name AS schools_name, teachers.last_name, "
+				+ "    null as easiness, "
+				+ "    schools.name AS schools_name, "
+				+ "    teachers.last_name, "
 				+ "    teachers.first_name, "
-				+ "    teacher_ratings.helpfulness, "
-				+ "    teacher_ratings.clarity, teacher_ratings.rater_interest, "
-				+ "    teacher_ratings.date, "
-				+ "    classes.level, departments.name AS departments_name,"
-				+ "    teacher_ratings.comment "
-				+ "FROM teacher_ratings "
-				+ "    JOIN teachers ON teacher_ratings.teacher_id = teachers.id "
+				+ "    AVG(DISTINCT teacher_ratings.helpfulness) as helpfulness, "
+				+ "    AVG(DISTINCT teacher_ratings.clarity) as clarity, "
+				+ "    AVG(DISTINCT teacher_ratings.rater_interest) as rater_interest, "
+				+ "    DAYOFMONTH(transcript_records.date) AS rating_day_of_month, "
+				+ "    DAYOFWEEK(transcript_records.date) AS rating_day_of_week, "
+				+ "    DAYOFYEAR(transcript_records.date) AS rating_day_of_year, "
+				+ "    MONTH(transcript_records.date) AS rating_month, "
+				+ "    YEAR(transcript_records.date) AS rating_year, "
+				+ "    QUARTER(transcript_records.date) AS rating_quarter, "
+				+ "    WEEK(transcript_records.date) AS rating_week, "
+				+ "    WEEKOFYEAR(transcript_records.date) AS rating_week_of_year, "
+				+ "    UNIX_TIMESTAMP(transcript_records.date) AS rating_timestamp, "
+				+ "    classes.level, "
+				+ "    departments.name AS departments_name, "
+				// +
+				// "    AVG(DISTINCT school_ratings.school_reputation) as school_reputation, "
+				// +
+				// "    AVG(DISTINCT school_ratings.career_opportunities) as school_career_opportunities, "
+				// +
+				// "    AVG(DISTINCT school_ratings.campus_grounds) as school_campus_grounds, "
+				// +
+				// "    AVG(DISTINCT school_ratings.quality_of_food) as school_quality_of_food, "
+				// +
+				// "    AVG(DISTINCT school_ratings.social_activities) as school_social_activities, "
+				// +
+				// "    AVG(DISTINCT school_ratings.campus_location) as school_campus_location, "
+				// +
+				// "    AVG(DISTINCT school_ratings.condition_of_library) as school_condition_of_library, "
+				// +
+				// "    AVG(DISTINCT school_ratings.internet_speed) as school_internet_speed, "
+				// +
+				// "    AVG(DISTINCT school_ratings.clubs_and_events) as school_clubs_and_events, "
+				// +
+				// "    AVG(DISTINCT school_ratings.school_happiness) as school_happiness,"
+				+ "    locations.name AS location_name,"
+				+ "    states.name AS states_name "
+				+ "FROM transcript_records "
+				+ "    JOIN transcripts ON transcript_records.transcript_id = transcripts.id "
+				+ "    JOIN teachers ON transcript_records.teacher_id "
+				+ "    JOIN teacher_ratings ON teachers.id = teacher_ratings.teacher_id "
 				+ "    JOIN schools ON teachers.school_id = schools.id "
-				+ "    JOIN classes ON teacher_ratings.class_id = classes.id "
-				+ "    JOIN departments ON classes.department_id = departments.id";
+				+ "    JOIN locations ON schools.location_id = locations.id "
+				+ "    JOIN states ON locations.state_id = states.id "
+				// +
+				// "    JOIN school_ratings ON schools.id = school_ratings.school_id "
+				+ "    JOIN classes ON transcript_records.class_id = classes.id "
+				+ "    JOIN departments ON classes.department_id = departments.id"
+				// I don't know if I can do prepared statements with weka
+				// InstanceQuery, using a Transcript model should always return
+				// safe data. Probably...
+				+ "WHERE transcripts.id = " + transcript.getId() + " "
+				+ "GROUP BY teacher_ratings.helpfulness, "
+				+ "    teacher_ratings.clarity, "
+				+ "    teacher_ratings.rater_interest "
+		// + ",    school_ratings.school_reputation, "
+		// + "    school_ratings.career_opportunities, "
+		// + "    school_ratings.campus_grounds, "
+		// + "    school_ratings.quality_of_food, "
+		// + "    school_ratings.social_activities, "
+		// + "    school_ratings.campus_location, "
+		// + "    school_ratings.condition_of_library, "
+		// + "    school_ratings.internet_speed, "
+		// + "    school_ratings.clubs_and_events, "
+		// + "    school_ratings.school_happiness"
+		;
 
 		try
 		{
@@ -246,19 +318,128 @@ public class ModelBuilder
 			instanceQuery.setQuery(query);
 			Instances data = instanceQuery.retrieveInstances();
 
-			// Convert ratings to categorical values since ratings are discrete.
+			// Set our class attribute
+			data.setClassIndex(0);
+
+			ModelBuilder.printAttributeNames(data);
+
+			System.out.println("initial data num attrs: "
+					+ data.numAttributes());
+			data = ModelBuilder.prepareNominalToBinary(data);
+			System.out.println("prepareNominalToBinary num attrs: "
+					+ data.numAttributes());
+
+			data = ModelBuilder.prepareNumericToBinary(data);
+
+			ModelBuilder.printAttributeNames(data);
+
+			// TODO prepare instances in the same way we're preparing binary
+			// data
+
+			System.out.println("got instances to predict on: " + data.size());
+			return data;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		return null;
+	}
+
+	public static Instances getData(double sample)
+	{
+		String query = "SELECT "
+				+ "    teacher_ratings.easiness," // Note that this is our class
+													// attribute
+				+ "    schools.name AS schools_name, "
+				+ "    teachers.last_name, "
+				+ "    teachers.first_name, "
+				+ "    teacher_ratings.helpfulness, "
+				+ "    teacher_ratings.clarity, "
+				+ "    teacher_ratings.rater_interest, "
+				+ "    DAYOFMONTH(teacher_ratings.date) AS rating_day_of_month, "
+				+ "    DAYOFWEEK(teacher_ratings.date) AS rating_day_of_week, "
+				+ "    DAYOFYEAR(teacher_ratings.date) AS rating_day_of_year, "
+				+ "    MONTH(teacher_ratings.date) AS rating_month, "
+				+ "    YEAR(teacher_ratings.date) AS rating_year, "
+				+ "    QUARTER(teacher_ratings.date) AS rating_quarter, "
+				+ "    WEEK(teacher_ratings.date) AS rating_week, "
+				+ "    WEEKOFYEAR(teacher_ratings.date) AS rating_week_of_year, "
+				+ "    UNIX_TIMESTAMP(teacher_ratings.date) AS rating_timestamp, "
+				+ "    classes.level, "
+				+ "    departments.name AS departments_name, "
+				// +
+				// "    AVG(DISTINCT school_ratings.school_reputation) as school_reputation, "
+				// +
+				// "    AVG(DISTINCT school_ratings.career_opportunities) as school_career_opportunities, "
+				// +
+				// "    AVG(DISTINCT school_ratings.campus_grounds) as school_campus_grounds, "
+				// +
+				// "    AVG(DISTINCT school_ratings.quality_of_food) as school_quality_of_food, "
+				// +
+				// "    AVG(DISTINCT school_ratings.social_activities) as school_social_activities, "
+				// +
+				// "    AVG(DISTINCT school_ratings.campus_location) as school_campus_location, "
+				// +
+				// "    AVG(DISTINCT school_ratings.condition_of_library) as school_condition_of_library, "
+				// +
+				// "    AVG(DISTINCT school_ratings.internet_speed) as school_internet_speed, "
+				// +
+				// "    AVG(DISTINCT school_ratings.clubs_and_events) as school_clubs_and_events, "
+				// +
+				// "    AVG(DISTINCT school_ratings.school_happiness) as school_happiness, "
+				+ "    locations.name AS location_name,"
+				+ "    states.name AS states_name "
+				+ "FROM teacher_ratings "
+				+ "    JOIN teachers ON teacher_ratings.teacher_id = teachers.id "
+				+ "    JOIN schools ON teachers.school_id = schools.id "
+				+ "    JOIN classes ON teacher_ratings.class_id = classes.id "
+				+ "    JOIN departments ON classes.department_id = departments.id "
+				+ "    JOIN locations ON schools.location_id = locations.id "
+				+ "    JOIN states ON locations.state_id = states.id "
+		// + "    JOIN school_ratings ON schools.id = school_ratings.school_id "
+		// + "GROUP BY school_ratings.school_reputation, "
+		// + "    school_ratings.career_opportunities, "
+		// + "    school_ratings.campus_grounds, "
+		// + "    school_ratings.quality_of_food, "
+		// + "    school_ratings.social_activities, "
+		// + "    school_ratings.campus_location, "
+		// + "    school_ratings.condition_of_library, "
+		// + "    school_ratings.internet_speed, "
+		// + "    school_ratings.clubs_and_events, "
+		// + "    school_ratings.school_happiness"
+		;
+
+		System.out.println(query);
+		try
+		{
+			File propsFile = new File("DatabaseUtils.props");
+			System.out.println(propsFile + " " + propsFile.getAbsolutePath());
+
+			InstanceQuery instanceQuery = new InstanceQuery();
+			instanceQuery.setCustomPropsFile(propsFile);
+			instanceQuery.setUsername("root");
+			instanceQuery.setPassword("");
+			instanceQuery.setQuery(query);
+			Instances data = instanceQuery.retrieveInstances();
+
+			// Convert easiness ratings to categorical values we only want to
+			// predict in discrete terms
 			NumericToNominal numToNom = new NumericToNominal();
-			numToNom.setAttributeIndices("1,5,6,7");
+			numToNom.setAttributeIndices("1");
 			numToNom.setInputFormat(data);
 			data = Filter.useFilter(data, numToNom);
 
 			// Set our class attribute
 			data.setClassIndex(0);
 
+			ModelBuilder.printAttributeNames(data);
+
 			// Sample a subset of the data
 			Resample resampler = new Resample();
 			resampler.setInputFormat(data);
-			resampler.setBiasToUniformClass(1);
 			resampler.setRandomSeed(ModelBuilder.seed);
 			resampler.setSampleSizePercent(sample);
 			data = Filter.useFilter(data, resampler);
@@ -285,12 +466,31 @@ public class ModelBuilder
 		Instances data = ModelBuilder.getData(sample);
 
 		System.out.println("initial data num attrs: " + data.numAttributes());
-		data = ModelBuilder.prepareCommentVector(data);
-		System.out.println("prepareCommentVector num attrs: "
-				+ data.numAttributes());
+		// data = ModelBuilder.prepareCommentVector(data);
+		// System.out.println("prepareCommentVector num attrs: "
+		// + data.numAttributes());
 		data = ModelBuilder.prepareWithoutDate(data);
 
 		return data;
+	}
+
+	public static Classifier loadModel(String name)
+	{
+		try
+		{
+			System.out.println("======================================");
+			System.out.println("Loading model: " + name);
+			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(
+					name));
+			Classifier cls = (Classifier) ois.readObject();
+			ois.close();
+			return cls;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public static Instances prepareCommentVector(Instances data)

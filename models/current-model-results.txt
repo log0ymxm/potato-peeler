@@ -1,0 +1,317 @@
+CLI Runner
+Generating a model
+Fetching instances for 1.0% of available data
+SELECT     teacher_ratings.easiness,    schools.name AS schools_name,     teachers.last_name,     teachers.first_name,     teacher_ratings.helpfulness,     teacher_ratings.clarity,     teacher_ratings.rater_interest,     DAYOFMONTH(teacher_ratings.date) AS rating_day_of_month,     DAYOFWEEK(teacher_ratings.date) AS rating_day_of_week,     DAYOFYEAR(teacher_ratings.date) AS rating_day_of_year,     MONTH(teacher_ratings.date) AS rating_month,     YEAR(teacher_ratings.date) AS rating_year,     QUARTER(teacher_ratings.date) AS rating_quarter,     WEEK(teacher_ratings.date) AS rating_week,     WEEKOFYEAR(teacher_ratings.date) AS rating_week_of_year,     UNIX_TIMESTAMP(teacher_ratings.date) AS rating_timestamp,     classes.level,     departments.name AS departments_name,     locations.name AS location_name,    states.name AS states_name FROM teacher_ratings     JOIN teachers ON teacher_ratings.teacher_id = teachers.id     JOIN schools ON teachers.school_id = schools.id     JOIN classes ON teacher_ratings.class_id = classes.id     JOIN departments ON classes.department_id = departments.id     JOIN locations ON schools.location_id = locations.id     JOIN states ON locations.state_id = states.id
+DatabaseUtils.props /Users/nrub/code/potato-peeler/DatabaseUtils.props
+======================================
+Attributes: 20
+Attr:[0] easiness (nominal)
+Attr:[1] schools_name (nominal)
+Attr:[2] last_name (nominal)
+Attr:[3] first_name (nominal)
+Attr:[4] helpfulness (numeric)
+Attr:[5] clarity (numeric)
+Attr:[6] rater_interest (numeric)
+Attr:[7] rating_day_of_month (numeric)
+Attr:[8] rating_day_of_week (numeric)
+Attr:[9] rating_day_of_year (numeric)
+Attr:[10] rating_month (numeric)
+Attr:[11] rating_year (numeric)
+Attr:[12] rating_quarter (numeric)
+Attr:[13] rating_week (numeric)
+Attr:[14] rating_week_of_year (numeric)
+Attr:[15] rating_timestamp (numeric)
+Attr:[16] level (nominal)
+Attr:[17] departments_name (nominal)
+Attr:[18] location_name (nominal)
+Attr:[19] states_name (nominal)
+======================================
+Attributes: 20
+Attr:[0] easiness (nominal)
+Attr:[1] schools_name (nominal)
+Attr:[2] last_name (nominal)
+Attr:[3] first_name (nominal)
+Attr:[4] helpfulness (numeric)
+Attr:[5] clarity (numeric)
+Attr:[6] rater_interest (numeric)
+Attr:[7] rating_day_of_month (numeric)
+Attr:[8] rating_day_of_week (numeric)
+Attr:[9] rating_day_of_year (numeric)
+Attr:[10] rating_month (numeric)
+Attr:[11] rating_year (numeric)
+Attr:[12] rating_quarter (numeric)
+Attr:[13] rating_week (numeric)
+Attr:[14] rating_week_of_year (numeric)
+Attr:[15] rating_timestamp (numeric)
+Attr:[16] level (nominal)
+Attr:[17] departments_name (nominal)
+Attr:[18] location_name (nominal)
+Attr:[19] states_name (nominal)
+got data instances: 505
+initial data num attrs: 20
+prepareNominalToBinary num attrs: 21913
+Learning on 21913 features
+Building vote ensemble classifier on attribute: @attribute easiness=1_binarized {0,1}
+======================================
+Building class weka.classifiers.rules.OneR
+Built classifier
+Building class weka.classifiers.bayes.NaiveBayes
+Built classifier
+Building class weka.classifiers.functions.Logistic
+Built classifier
+Building class weka.classifiers.trees.J48
+Built classifier
+Building class weka.classifiers.functions.SMO
+Built classifier
+Building class weka.classifiers.trees.RandomForest
+Built classifier
+Building class weka.classifiers.functions.SGD
+Built classifier
+Building class weka.classifiers.lazy.IBk
+Built classifier
+======================================
+Saving model: data/easiness-vote-1.model
+Building vote ensemble classifier on attribute: @attribute easiness=2_binarized {0,1}
+======================================
+Building class weka.classifiers.rules.OneR
+Built classifier
+Building class weka.classifiers.bayes.NaiveBayes
+Built classifier
+Building class weka.classifiers.functions.Logistic
+Built classifier
+Building class weka.classifiers.trees.J48
+Built classifier
+Building class weka.classifiers.functions.SMO
+Built classifier
+Building class weka.classifiers.trees.RandomForest
+Built classifier
+Building class weka.classifiers.functions.SGD
+Built classifier
+Building class weka.classifiers.lazy.IBk
+Built classifier
+======================================
+Saving model: data/easiness-vote-2.model
+Building vote ensemble classifier on attribute: @attribute easiness=3_binarized {0,1}
+======================================
+Building class weka.classifiers.rules.OneR
+Built classifier
+Building class weka.classifiers.bayes.NaiveBayes
+Built classifier
+Building class weka.classifiers.functions.Logistic
+Built classifier
+Building class weka.classifiers.trees.J48
+Built classifier
+Building class weka.classifiers.functions.SMO
+Built classifier
+Building class weka.classifiers.trees.RandomForest
+Built classifier
+Building class weka.classifiers.functions.SGD
+Built classifier
+Building class weka.classifiers.lazy.IBk
+Built classifier
+======================================
+Saving model: data/easiness-vote-3.model
+Building vote ensemble classifier on attribute: @attribute easiness=4_binarized {0,1}
+======================================
+Building class weka.classifiers.rules.OneR
+Built classifier
+Building class weka.classifiers.bayes.NaiveBayes
+Built classifier
+Building class weka.classifiers.functions.Logistic
+Built classifier
+Building class weka.classifiers.trees.J48
+Built classifier
+Building class weka.classifiers.functions.SMO
+Built classifier
+Building class weka.classifiers.trees.RandomForest
+Built classifier
+Building class weka.classifiers.functions.SGD
+Built classifier
+Building class weka.classifiers.lazy.IBk
+Built classifier
+======================================
+Saving model: data/easiness-vote-4.model
+Building vote ensemble classifier on attribute: @attribute easiness=5_binarized {0,1}
+======================================
+Building class weka.classifiers.rules.OneR
+Built classifier
+Building class weka.classifiers.bayes.NaiveBayes
+Built classifier
+Building class weka.classifiers.functions.Logistic
+Built classifier
+Building class weka.classifiers.trees.J48
+Built classifier
+Building class weka.classifiers.functions.SMO
+Built classifier
+Building class weka.classifiers.trees.RandomForest
+Built classifier
+Building class weka.classifiers.functions.SGD
+Built classifier
+Building class weka.classifiers.lazy.IBk
+Built classifier
+======================================
+Saving model: data/easiness-vote-5.model
+======================================
+Calculating 10-fold evaluation on a dataset of 505 instances and 21913 features.
+======================================
+Evaluation:
+
+Correctly Classified Instances         464               91.8812 %
+Incorrectly Classified Instances        41                8.1188 %
+Kappa statistic                          0.4733
+Mean absolute error                      0.1046
+Root mean squared error                  0.2157
+Relative absolute error                 48.2926 %
+Root relative squared error             65.7279 %
+Coverage of cases (0.95 level)         100      %
+Mean rel. region size (0.95 level)      62.5743 %
+Total Number of Instances              505
+
+======================================
+Detailed Class Stats:
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.661    0.915      1.000    0.956      0.557    0.996     0.999     0
+                 0.339    0.000    1.000      0.339    0.506      0.557    0.996     0.973     1
+Weighted Avg.    0.919    0.580    0.926      0.919    0.901      0.557    0.996     0.996
+
+======================================
+Confusion Matrix:
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 443   0 |   a = 0
+  41  21 |   b = 1
+
+======================================
+Calculating 10-fold evaluation on a dataset of 505 instances and 21913 features.
+======================================
+Evaluation:
+
+Correctly Classified Instances         492               97.4257 %
+Incorrectly Classified Instances        13                2.5743 %
+Kappa statistic                          0.9162
+Mean absolute error                      0.1409
+Root mean squared error                  0.2158
+Relative absolute error                 43.5996 %
+Root relative squared error             53.7612 %
+Coverage of cases (0.95 level)         100      %
+Mean rel. region size (0.95 level)      74.1584 %
+Total Number of Instances              505
+
+======================================
+Detailed Class Stats:
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.127    0.969      1.000    0.984      0.919    1.000     1.000     0
+                 0.873    0.000    1.000      0.873    0.932      0.919    1.000     1.000     1
+Weighted Avg.    0.974    0.102    0.975      0.974    0.974      0.919    1.000     1.000
+
+======================================
+Confusion Matrix:
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 403   0 |   a = 0
+  13  89 |   b = 1
+
+======================================
+Calculating 10-fold evaluation on a dataset of 505 instances and 21913 features.
+======================================
+Evaluation:
+
+Correctly Classified Instances         499               98.8119 %
+Incorrectly Classified Instances         6                1.1881 %
+Kappa statistic                          0.9672
+Mean absolute error                      0.1566
+Root mean squared error                  0.2272
+Relative absolute error                 42.4403 %
+Root relative squared error             52.9207 %
+Coverage of cases (0.95 level)         100      %
+Mean rel. region size (0.95 level)      77.0297 %
+Total Number of Instances              505
+
+======================================
+Detailed Class Stats:
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.049    0.985      1.000    0.992      0.968    1.000     1.000     0
+                 0.951    0.000    1.000      0.951    0.975      0.968    1.000     0.999     1
+Weighted Avg.    0.988    0.037    0.988      0.988    0.988      0.968    1.000     1.000
+
+======================================
+Confusion Matrix:
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 382   0 |   a = 0
+   6 117 |   b = 1
+
+======================================
+Calculating 10-fold evaluation on a dataset of 505 instances and 21913 features.
+======================================
+Evaluation:
+
+Correctly Classified Instances         502               99.4059 %
+Incorrectly Classified Instances         3                0.5941 %
+Kappa statistic                          0.9825
+Mean absolute error                      0.145
+Root mean squared error                  0.2142
+Relative absolute error                 42.1966 %
+Root relative squared error             51.7313 %
+Coverage of cases (0.95 level)         100      %
+Mean rel. region size (0.95 level)      75.5446 %
+Total Number of Instances              505
+
+======================================
+Detailed Class Stats:
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.027    0.992      1.000    0.996      0.983    1.000     1.000     0
+                 0.973    0.000    1.000      0.973    0.986      0.983    1.000     1.000     1
+Weighted Avg.    0.994    0.021    0.994      0.994    0.994      0.983    1.000     1.000
+
+======================================
+Confusion Matrix:
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 394   0 |   a = 0
+   3 108 |   b = 1
+
+======================================
+Calculating 10-fold evaluation on a dataset of 505 instances and 21913 features.
+======================================
+Evaluation:
+
+Correctly Classified Instances         499               98.8119 %
+Incorrectly Classified Instances         6                1.1881 %
+Kappa statistic                          0.9637
+Mean absolute error                      0.133
+Root mean squared error                  0.2049
+Relative absolute error                 39.73   %
+Root relative squared error             50.1368 %
+Coverage of cases (0.95 level)         100      %
+Mean rel. region size (0.95 level)      73.3663 %
+Total Number of Instances              505
+
+======================================
+Detailed Class Stats:
+=== Detailed Accuracy By Class ===
+
+                 TP Rate  FP Rate  Precision  Recall   F-Measure  MCC      ROC Area  PRC Area  Class
+                 1.000    0.056    0.985      1.000    0.993      0.964    1.000     1.000     0
+                 0.944    0.000    1.000      0.944    0.971      0.964    1.000     1.000     1
+Weighted Avg.    0.988    0.044    0.988      0.988    0.988      0.964    1.000     1.000
+
+======================================
+Confusion Matrix:
+=== Confusion Matrix ===
+
+   a   b   <-- classified as
+ 398   0 |   a = 0
+   6 101 |   b = 1
