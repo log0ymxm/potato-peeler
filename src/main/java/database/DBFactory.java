@@ -24,6 +24,7 @@ public class DBFactory
 		}
 	}
 
+	// I'm a slow method, FIXME
 	public static Connection getConnection()
 	{
 		try
