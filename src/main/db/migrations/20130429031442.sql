@@ -1,0 +1,8 @@
+ALTER TABLE `transcript_records` ADD INDEX `TRANSCRIPT_RECORDS_TRANSCRIPT_ID_INDEX` (`transcript_id`);
+ALTER TABLE `transcript_records` ADD INDEX `TRANSCRIPT_RECORDS_TEACHER_ID_INDEX` (`teacher_id`);
+ALTER TABLE `teacher_ratings` ADD INDEX `TEACHER_RATINGS_TEACHER_ID_INDEX` (`teacher_id`);
+ALTER TABLE `teachers` ADD INDEX `TEACHERS_SCHOOL_ID_INDEX` (`school_id`);
+ALTER TABLE `schools` ADD INDEX `SCHOOLS_LOCATION_ID_INDEX` (`location_id`);
+ALTER TABLE `locations` ADD INDEX `LOCATIONS_STATE_ID_INDEX` (`state_id`);
+ALTER TABLE `school_ratings` ADD INDEX `SCHOOL_RATINGS_SCHOOL_ID_INDEX` (`school_id`);
+ALTER TABLE `transcript_records` ADD INDEX `TRANSCRIPT_RECORDS_CLASS_ID_INDEX` (`class_id`);
