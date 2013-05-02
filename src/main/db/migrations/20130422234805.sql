@@ -1,2 +1,0 @@
-ALTER TABLE `classes` ADD INDEX `CLASSES_DEPARTMENT_ID_INDEX` (`department_id`);
-ALTER TABLE `teachers` ADD INDEX `TEACHERS_DEPARTMENT_ID_INDEX` (`department_id`);
