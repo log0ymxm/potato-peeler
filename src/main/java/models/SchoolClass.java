@@ -62,6 +62,51 @@ public class SchoolClass extends Model
 		this.setLevel(level);
 	}
 
+	public static ModelList<SchoolClass> findBySchool(String school_id)
+	{
+		System.out.println("find all classes");
+		ModelList<SchoolClass> classes = new ModelList<>();
+
+		Connection connection = DBFactory.getConnection();
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+
+		try
+		{
+
+			String query = "SELECT classes.id, classes.department_id, classes.level FROM classes JOIN teachers ON teachers.department_id=classes.department_id JOIN schools ON teachers.school_id=schools.id WHERE schools.id=? LIMIT 200";
+			System.out.println(query);
+			statement = connection.prepareStatement(query);
+			statement.setString(1, school_id);
+			resultSet = statement.executeQuery();
+
+			while (resultSet.next())
+			{
+				SchoolClass schoolClass = new SchoolClass(resultSet);
+				classes.add(schoolClass);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			System.exit(1);
+		}
+		finally
+		{
+			try
+			{
+				resultSet.close();
+				statement.close();
+				DBFactory.closeConnection(connection);
+			}
+			catch (Exception exception)
+			{
+				exception.printStackTrace();
+			}
+		}
+		return classes;
+	}
+
 	public static ModelList<SchoolClass> findByTeacher(String teacher_id)
 	{
 		System.out.println("find classes by teacher");

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import database.DBFactory;
+import database.InvalidModelException;
 import database.Model;
 
 public class Transcript extends Model
@@ -17,6 +18,24 @@ public class Transcript extends Model
 
 	private String id;
 	private boolean isPredicted;
+
+	public Transcript()
+	{
+		super("transcripts", new ArrayList<String>()
+		{
+
+			{
+				this.add("id");
+				this.add("date");
+				this.add("is_predicted");
+			}
+		}, new ArrayList<String>()
+		{
+
+			{
+			}
+		}, true, true);
+	}
 
 	public Transcript(ResultSet resultSet) throws SQLException
 	{
@@ -91,6 +110,13 @@ public class Transcript extends Model
 		return transcript;
 	}
 
+	public static Transcript findOrCreate() throws InvalidModelException
+	{
+		Transcript transcript = new Transcript();
+		transcript.save();
+		return transcript;
+	}
+
 	public Date getDate()
 	{
 		return this.date;
@@ -110,14 +136,96 @@ public class Transcript extends Model
 	public String isValid()
 	{
 		// TODO
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	@Override
-	public boolean save()
+	public boolean save() throws InvalidModelException
 	{
-		// TODO
-		throw new UnsupportedOperationException();
+		int result = 0;
+
+		String error = this.isValid();
+		if (error == null)
+		{
+			Connection connection = DBFactory.getConnection();
+			PreparedStatement insertNewTeacher = null;
+			ResultSet resultSet = null;
+			PreparedStatement selectId = null;
+			if (this.isFresh())
+			{
+				String insertQuery = "INSERT INTO transcripts (date, is_predicted) VALUES (?, ?)";
+				try
+				{
+					insertNewTeacher = connection.prepareStatement(insertQuery);
+					Date date = new Date();
+					Boolean predicted = true;
+					insertNewTeacher.setDate(1,
+							new java.sql.Date(date.getTime()));
+					insertNewTeacher.setBoolean(2, predicted);
+					result = insertNewTeacher.executeUpdate();
+					if (result > 0)
+					{
+						String idQuery = "SELECT id FROM transcripts WHERE date = ? AND is_predicted=? LIMIT 1";
+						selectId = connection.prepareStatement(idQuery);
+						selectId.setDate(1, new java.sql.Date(date.getTime()));
+						selectId.setBoolean(2, predicted);
+						resultSet = selectId.executeQuery();
+
+						if (resultSet.next())
+						{
+							this.id = resultSet.getString(1);
+							this.setId(this.id);
+							this.fresh = false;
+							this.dirty = false;
+							return true;
+						}
+						else
+						{
+							System.err.println("Error getting class ID");
+							return false;
+						}
+					}
+				}
+				catch (SQLException e)
+				{
+					System.err.println(e.getSQLState() + ", "
+							+ e.getErrorCode());
+					e.printStackTrace();
+					System.exit(1);
+				}
+				finally
+				{
+					try
+					{
+						insertNewTeacher.close();
+						if (selectId != null)
+						{
+							selectId.close();
+						}
+						if (resultSet != null)
+						{
+							resultSet.close();
+						}
+						DBFactory.closeConnection(connection);
+					}
+					catch (SQLException e)
+					{
+						e.printStackTrace();
+						System.exit(1);
+					}
+				}
+
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			throw new InvalidModelException(error);
+		}
+		return false;
 	}
 
 	public void setDate(Date date)

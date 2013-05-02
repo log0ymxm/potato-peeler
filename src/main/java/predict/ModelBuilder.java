@@ -306,6 +306,9 @@ public class ModelBuilder
 		// + "    school_ratings.school_happiness"
 		;
 
+		System.out.println("--- model builder predict instances query: ");
+		System.out.println(query);
+
 		try
 		{
 			File propsFile = new File("DatabaseUtils.props");

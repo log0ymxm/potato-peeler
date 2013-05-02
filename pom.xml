@@ -114,7 +114,19 @@
 		<artifactId>jersey-server</artifactId>
 		<version>1.8</version>
 	</dependency>
-                            
+                        
+	<dependency>  
+    	<groupId>org.primefaces</groupId>  
+    	<artifactId>primefaces</artifactId>  
+    	<version>3.5</version>  
+	</dependency>
+	
+	<dependency>
+		<groupId>org.json</groupId>
+		<artifactId>json</artifactId>
+		<version>20090211</version>
+	</dependency>
+
   </dependencies>
 
   <build>
@@ -213,5 +225,14 @@
       <url>http://mvn.carbonfive.com/public</url>
     </pluginRepository>
   </pluginRepositories>
+
+  <repositories>
+    <repository>  
+    	<id>prime-repo</id>  
+    	<name>PrimeFaces Maven Repository</name>  
+    	<url>http://repository.primefaces.org</url>  
+    	<layout>default</layout>  
+	</repository>  
+  </repositories>
   
 </project>

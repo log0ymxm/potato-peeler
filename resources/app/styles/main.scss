@@ -5,6 +5,18 @@
 
 #content {
   padding-top: 100px;
+
+  table {
+    td, th {
+      vertical-align: top;
+    }
+    thead {
+      th {
+        padding: 0;
+      }
+    }
+  }
+
 }
 
 #record-selection {

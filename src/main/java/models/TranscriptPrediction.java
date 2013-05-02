@@ -24,7 +24,7 @@ public class TranscriptPrediction extends Model
 		super(table, fields, relations, dirty, fresh);
 	}
 
-	public static TranscriptPrediction findById(String id)
+	public static String findById(String id)
 	{
 		TranscriptPrediction transcriptPrediction = null;
 
@@ -75,6 +75,8 @@ public class TranscriptPrediction extends Model
 				System.out.println("Prediction distribution of 5: "
 						+ classification_5);
 
+				// TODO generate JSON string
+
 			}
 
 		}
@@ -83,7 +85,7 @@ public class TranscriptPrediction extends Model
 			e.printStackTrace();
 		}
 
-		return transcriptPrediction;
+		return null;
 	}
 
 	@Override

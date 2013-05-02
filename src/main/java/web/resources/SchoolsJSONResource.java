@@ -6,11 +6,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import models.School;
+import models.SchoolClass;
 import models.Teacher;
 
 @Path("schools")
 public class SchoolsJSONResource
 {
+
+	@GET
+	@Path("{id}/classes")
+	@Produces("application/json")
+	public String getClasses(@PathParam("id") String id)
+	{
+		return SchoolClass.findBySchool(id).toJson();
+	}
 
 	@GET
 	@Path("{id}")
@@ -25,6 +34,7 @@ public class SchoolsJSONResource
 	@Produces("application/json")
 	public String getTeachers(@PathParam("id") String id)
 	{
+		// PE NOTE no longer in use
 		return Teacher.findBySchool(id).toJson();
 	}
 }

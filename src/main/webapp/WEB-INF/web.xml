@@ -39,7 +39,7 @@
 
 	<!-- Welcome page -->
 	<welcome-file-list>
-		<welcome-file>login.xhtml</welcome-file>
+		<welcome-file>welcome.xhtml</welcome-file>
 	</welcome-file-list>
  
 	<!-- JSF mapping -->
@@ -71,12 +71,6 @@
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
 	
-	<!--  http://knowledgeshare.awardspace.info/?p=204 -->
-	 <context-param>
-        <param-name>javax.faces.PROJECT_STAGE</param-name>
-        <param-value>Development</param-value>
-    </context-param>
-     
     <session-config>
         <session-timeout>
             30
