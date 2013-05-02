@@ -1,13 +1,16 @@
-package auth;
+package beans;
 
 import java.io.Serializable;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-//http://knowledgeshare.awardspace.info/?p=204
+import auth.Util;
+
+import models.User;
 
 @ManagedBean(name = "loginBean")
 @SessionScoped
@@ -15,45 +18,41 @@ import javax.servlet.http.HttpSession;
  *
  * @author User
  */
-public class LoginBean implements Serializable {
+public class LoginBean implements Serializable
+{
 
 	private static final long serialVersionUID = 1L;
-	private String password;
 	private String message, uname;
+	private String password;
 
-	public String getMessage() {
-		return message;
+	public String getMessage()
+	{
+		return this.message;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public String getPassword()
+	{
+		return this.password;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getUname()
+	{
+		return this.uname;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getUname() {
-		return uname;
-	}
-
-	public void setUname(String uname) {
-		this.uname = uname;
-	}
-
-	public String loginProject() {
-		boolean result = UserDAO.login(uname, password);
-		if (result) {
+	public String loginProject()
+	{
+		boolean result = User.login(this.uname, this.password);
+		if (result)
+		{
 			// get Http Session and store username
 			HttpSession session = Util.getSession();
-			session.setAttribute("username", uname);
+			session.setAttribute("username", this.uname);
 
 			return "home";
-		} else {
+		}
+		else
+		{
 
 			FacesContext.getCurrentInstance().addMessage(
 					null,
@@ -67,9 +66,25 @@ public class LoginBean implements Serializable {
 		}
 	}
 
-	public String logout() {
+	public String logout()
+	{
 		HttpSession session = Util.getSession();
 		session.invalidate();
 		return "login";
+	}
+
+	public void setMessage(String message)
+	{
+		this.message = message;
+	}
+
+	public void setPassword(String password)
+	{
+		this.password = password;
+	}
+
+	public void setUname(String uname)
+	{
+		this.uname = uname;
 	}
 }
